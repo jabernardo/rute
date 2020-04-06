@@ -49,8 +49,6 @@ export function test(route: string, path: string): RouteData | null {
   let translatedRoute: string = `^${ getRouteTranslation(route) }$`;
   let testRouteData: RegExpMatchArray | null = path.match(getRouteTest(translatedRoute));
 
-  console.log(path, getRouteTest(translatedRoute), testRouteData);
-
   return testRouteData ? getRouteData(translatedRoute, testRouteData) : null;
 }
 

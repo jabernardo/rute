@@ -4,6 +4,7 @@ import { RouteHandler } from "./route_handler.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 
+import { Request } from "./request.ts";
 
 export interface RouteInfo {
   path: string,
@@ -12,11 +13,11 @@ export interface RouteInfo {
 }
 
 export class Rute {
-  _routes: Routes = {};
+  private _routes: Routes = {};
 
-  _default: Route = <Route>{
+  private _default: Route = <Route>{
     method: [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
-    handler: (request: ServerRequest) => {
+    handler: (request: Request) => {
       return new Promise((resolve, reject) => {
         resolve({
           status: 404,
@@ -61,10 +62,15 @@ export class Rute {
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
       let routeInfo: RouteInfo = await this.getRoute(path);
-      let answer: Response = await this._default.handler(req, <RouteData>{});
+      let httpRequest: Request = new Request(req);
+
+      let answer: Response = await this._default.handler(httpRequest);
+      
+      console.log(await httpRequest.body());
 
       if (routeInfo.route != undefined && routeInfo.route.method.indexOf(req.method) > -1) {
-        answer = await routeInfo.route.handler(req, routeInfo.data);
+        httpRequest = new Request(req, routeInfo.data);
+        answer = await routeInfo.route.handler(httpRequest);
       }
 
       req.respond(answer);
@@ -76,7 +82,7 @@ const app: Rute = new Rute()
 app.addRoute(
     "GET",
     "/",
-    <RouteHandler>(request: ServerRequest) => {
+    <RouteHandler>(request: Request) => {
       return new Promise((resolve, reject) => {
         resolve({body: "Hi There!"});
       });
@@ -86,8 +92,8 @@ app.addRoute(
 app.addRoute(
     "GET",
     "/categories/{category}/pages/{page}",
-    <RouteHandler>(request: ServerRequest, data: RouteData) => {
-      console.log(data);
+    <RouteHandler>(request: Request) => {
+      console.log(request.params);
       return new Promise((resolve, reject) => {
         resolve({body: "Boo!"});
       });
