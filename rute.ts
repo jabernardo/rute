@@ -4,6 +4,13 @@ import { RouteHandler } from "./route_handler.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 
+
+export interface RouteInfo {
+  path: string,
+  data: RouteData,
+  route: Route
+}
+
 export class Rute {
   _routes: Routes = {};
 
@@ -28,31 +35,36 @@ export class Rute {
     }
   }
 
-  async getRoute(url: string): Promise<Route> {
-    let defaultRoute = this._routes["404"] || this._default;
+  async getRoute(url: string): Promise<RouteInfo> {
+    let callback = this._routes["404"] || this._default;
+    let data: RouteData | null = <RouteData>{};
 
     for (let route in this._routes) {
-      let data: RouteData | null = test(route, url);
+      data = test(route, url);
 
       if (data != null) {
-        defaultRoute = this._routes[route];
+        callback = this._routes[route];
         break;
       }
     }
 
     return new Promise((resolve, reject) => {
-      resolve(defaultRoute);
+      resolve({
+        path: url,
+        data: data == null ? <RouteData>{} : data,
+        route: callback
+      });
     });
   }
 
   async listen(s: Server): Promise<void> {
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
-      let route: Route = await this.getRoute(path);
-      let answer: Response = await this._default.handler(req);
+      let routeInfo: RouteInfo = await this.getRoute(path);
+      let answer: Response = await this._default.handler(req, <RouteData>{});
 
-      if (route != undefined && route.method.indexOf(req.method) > -1) {
-        answer = await route.handler(req);
+      if (routeInfo.route != undefined && routeInfo.route.method.indexOf(req.method) > -1) {
+        answer = await routeInfo.route.handler(req, routeInfo.data);
       }
 
       req.respond(answer);
@@ -74,7 +86,8 @@ app.addRoute(
 app.addRoute(
     "GET",
     "/categories/{category}/pages/{page}",
-    <RouteHandler>(request: ServerRequest) => {
+    <RouteHandler>(request: ServerRequest, data: RouteData) => {
+      console.log(data);
       return new Promise((resolve, reject) => {
         resolve({body: "Boo!"});
       });
