@@ -6,6 +6,7 @@ import * as path from "https://deno.land/std/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request, parseHttpRequest } from "./request.ts";
+import { MIME } from "./mime_types.ts";
 
 export { Request, Response, Middleware, Next };
 
@@ -60,12 +61,12 @@ export class Rute extends MiddlewareContainer {
     let filePath: string = url == "/" ? "./index.html" : `.${url}`;
     let filePathInfo = path.parse(filePath);
 
-    console.log(this._staticPaths, this._staticPaths.indexOf(filePathInfo.dir), existsSync(filePath));
+    // console.log(this._staticPaths, this._staticPaths.indexOf(filePathInfo.dir), existsSync(filePath));
+    // console.log(MIME[filePathInfo.ext]);
 
-    if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
+    if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath) && MIME[filePathInfo.ext]) {
       let headers: Headers = new Headers();
-      headers.append("content-type", "text/css");
-      // headers.append("content-type", "image/png");
+      headers.append("content-type", MIME[filePathInfo.ext]);
 
       return {
         status: 200,
