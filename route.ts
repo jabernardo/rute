@@ -1,6 +1,7 @@
 import { ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 import { RouteData } from "./route_parser.ts";
 import { Request } from "./request.ts";
+import { MiddlewareContainer, Middleware, Next } from "./middleware.ts";
 
 export interface Routes {
   [path: string]: Route
@@ -13,15 +14,29 @@ export type RouteHandler = (request: Request) => Response;
 //   handler: RouteHandler
 // }
 
-export class Route {
+export class Route extends MiddlewareContainer {
   private _path: string;
   private _method: string | Array<string>;
   private _handler: RouteHandler;
 
   constructor(path: string, method: string | Array<string>, handler: RouteHandler) {
+    super();
+
     this._path = path;
     this._method = method;
     this._handler = handler;
+
+    // this.use((n: Next) => {
+    //     console.log('begin1');
+    //     n();
+    //     console.log('end1');
+    //   });
+  }
+
+  use(fn: Middleware): Route {
+    super.use(fn);
+
+    return this;
   }
 
   path(): string {
@@ -33,10 +48,15 @@ export class Route {
   }
 
   execute(httpRequest: Request): Response {
+    let answer: Response = {};
+
     if (this._method.indexOf(httpRequest.method) > -1)  {
-      return this._handler(httpRequest);
+      this.go(() => {
+        answer = this._handler(httpRequest);
+        console.log(answer);
+      });
     }
 
-    return {};
+    return answer;
   }
 }

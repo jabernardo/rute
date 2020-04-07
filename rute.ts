@@ -2,7 +2,7 @@ import { Route, Routes, RouteHandler } from "./route.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 
-import { Middleware, Next, Deferred } from "./middleware.ts";
+import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request } from "./request.ts";
 
 export interface RouteInfo {
@@ -11,7 +11,7 @@ export interface RouteInfo {
   route: Route
 }
 
-export class Rute extends Middleware {
+export class Rute extends MiddlewareContainer {
   private _routes: Routes = {};
 
   constructor() {
@@ -29,10 +29,21 @@ export class Rute extends Middleware {
     }
   );
 
-  addRoute(method: string | Array<string>, path: string, handler: RouteHandler): void {
+  addRoute(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
+    let route: Route = new Route(path, method, handler);
 
-    this._routes[routePath] = new Route(path, method, handler);
+    // let m: Middleware = (n: Next) => {
+    //   console.log('begin');
+    //   n()
+    //   console.log('end');
+    // }
+
+    middlewares.forEach((middleware: Middleware) => {
+      route.use(middleware);
+    });
+
+    this._routes[routePath] = route;
   }
 
   async getRoute(url: string): Promise<RouteInfo> {
@@ -71,7 +82,6 @@ export class Rute extends Middleware {
         this.go(() => {
           httpRequest = new Request(req, routeInfo.data);
           answer = routeInfo.route.execute(httpRequest);
-          console.log(answer);
         });
       }
 
@@ -88,6 +98,12 @@ app.use((next: Next) => {
   console.log("stop");
 });
 
+let d: Middleware = (n: Next) => {
+    console.log('begin');
+    n();
+    console.log('end');
+  };
+
 app.addRoute(
     "GET",
     "/",
@@ -95,8 +111,9 @@ app.addRoute(
       return {
         body: "Hi There!"
       };
-    }
-  );
+    },
+    d, d
+  )
 
 app.addRoute(
     "GET",
