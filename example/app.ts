@@ -3,6 +3,8 @@ import { Rute, Request, Response, Middleware, Next } from "../rute.ts";
 
 const app: Rute = new Rute()
 
+app.static("./public");
+
 app.use((next: Next) => {
   console.log("start");
   next();

@@ -1,6 +1,8 @@
 import { Route, Routes, RouteHandler } from "./route.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
+import { exists, existsSync } from "https://deno.land/std/fs/mod.ts";
+import * as path from "https://deno.land/std/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request, parseHttpRequest } from "./request.ts";
@@ -15,6 +17,7 @@ export interface RouteInfo {
 
 export class Rute extends MiddlewareContainer {
   private _routes: Routes = {};
+  private _staticPaths: string[] = [];
 
   constructor() {
     super();
@@ -48,6 +51,32 @@ export class Rute extends MiddlewareContainer {
     this._routes[routePath] = route;
   }
 
+  static(path: string) {
+    this._staticPaths.push(path);
+  }
+
+  private _staticRender(url: string): Response | null {
+    let i: number = 0;
+    let filePath: string = url == "/" ? "./index.html" : `.${url}`;
+    let filePathInfo = path.parse(filePath);
+
+    console.log(this._staticPaths, this._staticPaths.indexOf(filePathInfo.dir), existsSync(filePath));
+
+    if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
+      let headers: Headers = new Headers();
+      headers.append("content-type", "text/css");
+      // headers.append("content-type", "image/png");
+
+      return {
+        status: 200,
+        body: Deno.readFileSync(filePath),
+        headers
+      }
+    }
+
+    return null;
+  }
+
   async getRoute(url: string): Promise<RouteInfo> {
     let routeObj = this._routes["404"] || this._default;
     let data: RouteData | null = <RouteData>{};
@@ -75,12 +104,12 @@ export class Rute extends MiddlewareContainer {
       let path: string = getCleanPath(req.url);
       let routeInfo: RouteInfo = await this.getRoute(path);
       let httpRequest: Request = await parseHttpRequest(req, routeInfo.data);
-
+      let res:Response | null = this._staticRender(req.url);
       let answer: Response = this._default.execute(httpRequest);
 
       if (routeInfo.route != undefined) {
         this.go(() => {
-          answer = routeInfo.route.execute(httpRequest);
+          answer = this._staticRender(req.url) || routeInfo.route.execute(httpRequest);
         });
       }
 
