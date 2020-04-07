@@ -3,7 +3,7 @@ import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
-import { Request } from "./request.ts";
+import { Request, parseHttpRequest } from "./request.ts";
 
 export interface RouteInfo {
   path: string,
@@ -72,15 +72,12 @@ export class Rute extends MiddlewareContainer {
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
       let routeInfo: RouteInfo = await this.getRoute(path);
-      let httpRequest: Request = new Request(req);
+      let httpRequest: Request = await parseHttpRequest(req, routeInfo.data);
 
       let answer: Response = this._default.execute(httpRequest);
-      
-      console.log(await httpRequest.body());
 
       if (routeInfo.route != undefined) {
         this.go(() => {
-          httpRequest = new Request(req, routeInfo.data);
           answer = routeInfo.route.execute(httpRequest);
         });
       }
@@ -107,7 +104,7 @@ let d: Middleware = (n: Next) => {
 app.addRoute(
     "GET",
     "/",
-    <RouteHandler>(request: Request) => {
+    (request: Request) => {
       return {
         body: "Hi There!"
       };
@@ -116,10 +113,10 @@ app.addRoute(
   )
 
 app.addRoute(
-    "GET",
+    ["GET", "POST"],
     "/categories/{category}/pages/{page}",
-    <RouteHandler>(request: Request) => {
-      console.log(request.params);
+    (request: Request) => {
+      console.log(request.body(), request.params());
       return {
         body: "Boo!"
       };

@@ -7,31 +7,53 @@ import { RouteData } from "./route_parser.ts";
  *
  */
 
+export interface RequestData {
+  [key: string]: string;
+}
+
+export interface RequestInfo {
+  url: string;
+  method: string;
+  protocol: string;
+  headers: Headers;
+  params: RouteData;
+  body: string;
+}
+
+export async function parseHttpRequest(serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
+  const body_raw =  new TextDecoder().decode(await Deno.readAll(serverRequest.body));
+
+  const httpRequestContent: RequestInfo = {
+    url: serverRequest.url,
+    method: serverRequest.method,
+    protocol: serverRequest.proto,
+    headers: serverRequest.headers,
+    body: body_raw,
+    params: params,
+  }
+
+  return new Promise(resolve => {
+    resolve(new Request(httpRequestContent));
+  });
+}
+
 export class Request {
-  url!: string;
-  method!: string;
-  protocol!: string;
-  headers!: Headers;
-  params!: RouteData;
+  private _requestData: RequestInfo;
 
-  private _body: Deno.Reader;
-
-  constructor(serverRequest: ServerRequest, params: RouteData =  <RouteData>{}) {
-    this.url = serverRequest.url;
-    this.method = serverRequest.method;
-    this.protocol = serverRequest.proto;
-    this.headers = serverRequest.headers;
-    this._body = serverRequest.body;
-    this.params = params;
+  constructor(requestData: RequestInfo) {
+    this._requestData = requestData;
   }
 
-  async body(): Promise<any> {
-    const body =  new TextDecoder().decode(await Deno.readAll(this._body));
-
-    return new Promise((resolve, reject) => {
-      resolve(body);
-    });
+  params() {
+    return this._requestData.params;
   }
 
+  method() {
+    return this._requestData.method;
+  }
+
+  body() {
+   return this._requestData.body;
+ }
 }
 

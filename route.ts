@@ -50,10 +50,9 @@ export class Route extends MiddlewareContainer {
   execute(httpRequest: Request): Response {
     let answer: Response = {};
 
-    if (this._method.indexOf(httpRequest.method) > -1)  {
+    if (this._method.indexOf(httpRequest.method()) > -1)  {
       this.go(() => {
         answer = this._handler(httpRequest);
-        console.log(answer);
       });
     }
 
