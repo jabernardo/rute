@@ -44,12 +44,28 @@ export class Request {
     this._requestData = requestData;
   }
 
-  params() {
+  params(key: string = "", fallback: any = null):any {
+    if (key) {
+      return this._requestData.params[key] || fallback;
+    }
+
     return this._requestData.params;
+  }
+
+  protocol() {
+    return this._requestData.protocol;
   }
 
   method() {
     return this._requestData.method;
+  }
+
+  headers(key: string = "", fallback: any = null): Headers {
+    if (key) {
+      return this._requestData.headers.get(key) || fallback;
+    }
+
+    return this._requestData.headers;
   }
 
   body() {

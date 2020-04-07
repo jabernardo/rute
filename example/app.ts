@@ -30,7 +30,9 @@ app.addRoute(
     ["GET", "POST"],
     "/categories/{category}/pages/{page}",
     (request: Request) => {
-      console.log(request.body(), request.params());
+      console.log(request.body(), request.params(), request.params("category"));
+      console.log('---',request.headers().get('boo'));
+
       return {
         body: "Boo!"
       };
