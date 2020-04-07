@@ -1,6 +1,4 @@
-import { Route } from "./route.ts";
-import { Routes } from "./routes.ts";
-import { RouteHandler } from "./route_handler.ts";
+import { Route, Routes, RouteHandler } from "./route.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 
@@ -20,34 +18,32 @@ export class Rute extends Middleware {
     super();
   }
 
-  private _default: Route = <Route>{
-    method: [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
-    handler: (request: Request) => {
+  private _default: Route = new Route(
+    "404",
+    [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
+    (request: Request) => {
       return {
         status: 404,
         body: "404 Page not Found"
       };
     }
-  }
+  );
 
   addRoute(method: string | Array<string>, path: string, handler: RouteHandler): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
 
-    this._routes[routePath] = {
-      method: method,
-      handler: handler
-    }
+    this._routes[routePath] = new Route(path, method, handler);
   }
 
   async getRoute(url: string): Promise<RouteInfo> {
-    let callback = this._routes["404"] || this._default;
+    let routeObj = this._routes["404"] || this._default;
     let data: RouteData | null = <RouteData>{};
 
     for (let route in this._routes) {
       data = test(route, url);
 
       if (data != null) {
-        callback = this._routes[route];
+        routeObj = this._routes[route];
         break;
       }
     }
@@ -56,7 +52,7 @@ export class Rute extends Middleware {
       resolve({
         path: url,
         data: data == null ? <RouteData>{} : data,
-        route: callback
+        route: routeObj
       });
     });
   }
@@ -67,14 +63,14 @@ export class Rute extends Middleware {
       let routeInfo: RouteInfo = await this.getRoute(path);
       let httpRequest: Request = new Request(req);
 
-      let answer: Response = this._default.handler(httpRequest);
+      let answer: Response = this._default.execute(httpRequest);
       
       console.log(await httpRequest.body());
 
-      if (routeInfo.route != undefined && routeInfo.route.method.indexOf(req.method) > -1) {
+      if (routeInfo.route != undefined) {
         this.go(() => {
           httpRequest = new Request(req, routeInfo.data);
-          answer = routeInfo.route.handler(httpRequest);
+          answer = routeInfo.route.execute(httpRequest);
           console.log(answer);
         });
       }
