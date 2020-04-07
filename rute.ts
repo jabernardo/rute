@@ -5,6 +5,8 @@ import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request, parseHttpRequest } from "./request.ts";
 
+export { Request, Response, Middleware, Next };
+
 export interface RouteInfo {
   path: string,
   data: RouteData,
@@ -86,44 +88,3 @@ export class Rute extends MiddlewareContainer {
     }
   }
 }
-
-const app: Rute = new Rute()
-
-app.use((next: Next) => {
-  console.log("start");
-  next();
-  console.log("stop");
-});
-
-let d: Middleware = (n: Next) => {
-    console.log('begin');
-    n();
-    console.log('end');
-  };
-
-app.addRoute(
-    "GET",
-    "/",
-    (request: Request) => {
-      return {
-        body: "Hi There!"
-      };
-    },
-    d, d
-  )
-
-app.addRoute(
-    ["GET", "POST"],
-    "/categories/{category}/pages/{page}",
-    (request: Request) => {
-      console.log(request.body(), request.params());
-      return {
-        body: "Boo!"
-      };
-    }
-  );
-
-
-app.listen(serve({ port: 8000 }));
-
-console.log('test');
