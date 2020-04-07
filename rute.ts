@@ -64,9 +64,9 @@ export class Rute extends MiddlewareContainer {
     // console.log(this._staticPaths, this._staticPaths.indexOf(filePathInfo.dir), existsSync(filePath));
     // console.log(MIME[filePathInfo.ext]);
 
-    if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath) && MIME[filePathInfo.ext]) {
+    if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
       let headers: Headers = new Headers();
-      headers.append("content-type", MIME[filePathInfo.ext]);
+      headers.append("content-type", MIME[filePathInfo.ext] || "application/octet-stream");
 
       return {
         status: 200,
