@@ -4,6 +4,7 @@ import { RouteHandler } from "./route_handler.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 
+import { Middleware, Next, Deferred } from "./middleware.ts";
 import { Request } from "./request.ts";
 
 export interface RouteInfo {
@@ -12,8 +13,12 @@ export interface RouteInfo {
   route: Route
 }
 
-export class Rute {
+export class Rute extends Middleware {
   private _routes: Routes = {};
+
+  constructor() {
+    super();
+  }
 
   private _default: Route = <Route>{
     method: [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
@@ -67,8 +72,11 @@ export class Rute {
       console.log(await httpRequest.body());
 
       if (routeInfo.route != undefined && routeInfo.route.method.indexOf(req.method) > -1) {
-        httpRequest = new Request(req, routeInfo.data);
-        answer = routeInfo.route.handler(httpRequest);
+        this.go(() => {
+          httpRequest = new Request(req, routeInfo.data);
+          answer = routeInfo.route.handler(httpRequest);
+          console.log(answer);
+        });
       }
 
       req.respond(answer);
@@ -77,6 +85,13 @@ export class Rute {
 }
 
 const app: Rute = new Rute()
+
+app.use((next: Next) => {
+  console.log("start");
+  next();
+  console.log("stop");
+});
+
 app.addRoute(
     "GET",
     "/",
