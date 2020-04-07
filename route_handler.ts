@@ -2,4 +2,4 @@ import { ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/serv
 import { RouteData } from "./route_parser.ts";
 import { Request } from "./request.ts";
 
-export type RouteHandler = (request: Request) => Promise<Response> | Response;
+export type RouteHandler = (request: Request) => Response;

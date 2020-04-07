@@ -18,12 +18,10 @@ export class Rute {
   private _default: Route = <Route>{
     method: [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
     handler: (request: Request) => {
-      return new Promise((resolve, reject) => {
-        resolve({
-          status: 404,
-          body: "404 Page not Found"
-        })
-      });
+      return {
+        status: 404,
+        body: "404 Page not Found"
+      };
     }
   }
 
@@ -64,13 +62,13 @@ export class Rute {
       let routeInfo: RouteInfo = await this.getRoute(path);
       let httpRequest: Request = new Request(req);
 
-      let answer: Response = await this._default.handler(httpRequest);
+      let answer: Response = this._default.handler(httpRequest);
       
       console.log(await httpRequest.body());
 
       if (routeInfo.route != undefined && routeInfo.route.method.indexOf(req.method) > -1) {
         httpRequest = new Request(req, routeInfo.data);
-        answer = await routeInfo.route.handler(httpRequest);
+        answer = routeInfo.route.handler(httpRequest);
       }
 
       req.respond(answer);
@@ -83,9 +81,9 @@ app.addRoute(
     "GET",
     "/",
     <RouteHandler>(request: Request) => {
-      return new Promise((resolve, reject) => {
-        resolve({body: "Hi There!"});
-      });
+      return {
+        body: "Hi There!"
+      };
     }
   );
 
@@ -94,9 +92,9 @@ app.addRoute(
     "/categories/{category}/pages/{page}",
     <RouteHandler>(request: Request) => {
       console.log(request.params);
-      return new Promise((resolve, reject) => {
-        resolve({body: "Boo!"});
-      });
+      return {
+        body: "Boo!"
+      };
     }
   );
 
