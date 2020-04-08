@@ -40,7 +40,7 @@ export class Route extends MiddlewareContainer {
     let answer: Response = {};
 
     if (this._method.indexOf(httpRequest.method()) > -1)  {
-      this.go(() => {
+      this.go(httpRequest, () => {
         answer = this._handler(httpRequest);
       });
     }

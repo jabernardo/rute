@@ -105,7 +105,7 @@ export class Rute extends MiddlewareContainer {
       let answer: Response = this._default.execute(httpRequest);
 
       if (routeInfo.route != undefined) {
-        this.go(() => {
+        this.go(httpRequest, () => {
           answer = this._staticRender(req.url) || routeInfo.route.execute(httpRequest);
         });
       }

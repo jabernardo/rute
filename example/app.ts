@@ -4,15 +4,16 @@ const app: Rute = new Rute()
 
 app.static("./public");
 
-app.use((next: Next) => {
+app.use((req: Request, next: Next) => {
   console.log("start");
-  next();
+  next(req);
   console.log("stop");
 });
 
-let d: Middleware = (n: Next) => {
+let d: Middleware = (req: Request, n: Next) => {
     console.log('begin');
-    n();
+    console.log(req);
+    n(req);
     console.log('end');
   };
 
@@ -24,7 +25,7 @@ app.addRoute(
         body: "Hi There!"
       };
     },
-    d, d
+    d
   )
 
 app.addRoute(
