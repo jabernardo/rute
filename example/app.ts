@@ -1,5 +1,4 @@
-import { serve } from "https://deno.land/std@v0.36.0/http/server.ts";
-import { Rute, Request, Response, Middleware, Next } from "../rute.ts";
+import { Rute, Request, Response, Middleware, Next } from "../mod.ts";
 
 const app: Rute = new Rute()
 
@@ -42,4 +41,4 @@ app.addRoute(
   );
 
 
-app.listen(serve({ port: 8000 }));
+app.listen({ port: 8000 });

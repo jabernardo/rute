@@ -1,6 +1,6 @@
 import { Route, Routes, RouteHandler } from "./route.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
-import { serve, Server, ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
+import { serve, serveTLS, Server, ServerRequest, Response, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.36.0/http/server.ts";
 import { exists, existsSync } from "https://deno.land/std/fs/mod.ts";
 import * as path from "https://deno.land/std/path/mod.ts";
 
@@ -38,13 +38,7 @@ export class Rute extends MiddlewareContainer {
   addRoute(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
     let route: Route = new Route(path, method, handler);
-
-    // let m: Middleware = (n: Next) => {
-    //   console.log('begin');
-    //   n()
-    //   console.log('end');
-    // }
-
+    
     middlewares.forEach((middleware: Middleware) => {
       route.use(middleware);
     });
@@ -100,7 +94,11 @@ export class Rute extends MiddlewareContainer {
     });
   }
 
-  async listen(s: Server): Promise<void> {
+  async listen(addr: string | HTTPOptions | HTTPSOptions): Promise<void> {
+    const s: Server = (typeof addr !== "string" && "certFile" in addr) 
+      ? serveTLS(addr)
+      : serve(addr);
+
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
       let routeInfo: RouteInfo = await this.getRoute(path);
