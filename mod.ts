@@ -38,7 +38,7 @@ export class Rute extends MiddlewareContainer {
   addRoute(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
     let route: Route = new Route(path, method, handler);
-    
+
     middlewares.forEach((middleware: Middleware) => {
       route.use(middleware);
     });
@@ -52,11 +52,9 @@ export class Rute extends MiddlewareContainer {
 
   private _staticRender(url: string): Response | null {
     let i: number = 0;
-    let filePath: string = url == "/" ? "./index.html" : `.${url}`;
+    let urlWithoutParams = url.replace(/([#?].*)$/, "");
+    let filePath: string = url == "/" ? "./index.html" : `.${urlWithoutParams}`;
     let filePathInfo = path.parse(filePath);
-
-    // console.log(this._staticPaths, this._staticPaths.indexOf(filePathInfo.dir), existsSync(filePath));
-    // console.log(MIME[filePathInfo.ext]);
 
     if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
       let headers: Headers = new Headers();

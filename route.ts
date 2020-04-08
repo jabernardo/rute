@@ -9,11 +9,6 @@ export interface Routes {
 
 export type RouteHandler = (request: Request) => Response;
 
-// export interface Route {
-//   method: string | Array<string>,
-//   handler: RouteHandler
-// }
-
 export class Route extends MiddlewareContainer {
   private _path: string;
   private _method: string | Array<string>;
@@ -25,12 +20,6 @@ export class Route extends MiddlewareContainer {
     this._path = path;
     this._method = method;
     this._handler = handler;
-
-    // this.use((n: Next) => {
-    //     console.log('begin1');
-    //     n();
-    //     console.log('end1');
-    //   });
   }
 
   use(fn: Middleware): Route {
