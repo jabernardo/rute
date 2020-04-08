@@ -4,26 +4,26 @@ const app: Rute = new Rute()
 
 app.static("./public");
 
-app.use((req: Request, next: Next) => {
+app.use((req: Request, res: Response, next: Next) => {
   console.log("start");
-  next(req);
+  next();
   console.log("stop");
 });
 
-let d: Middleware = (req: Request, n: Next) => {
+let d: Middleware = (req: Request, res: Response, n: Next) => {
     console.log('begin');
     console.log(req);
-    n(req);
+    n();
     console.log('end');
   };
 
 app.addRoute(
     "GET",
     "/",
-    (request: Request) => {
-      return {
+    (request: Request, response: Response) => {
+      response.set({
         body: "Hi There!"
-      };
+      });
     },
     d
   )
@@ -31,13 +31,10 @@ app.addRoute(
 app.addRoute(
     ["GET", "POST"],
     "/categories/{category}/pages/{page}",
-    (request: Request) => {
-      console.log(request.body(), request.params(), request.params("category"));
-      console.log('---',request.headers().get('boo'));
-
-      return {
-        body: "Boo!"
-      };
+    (request: Request, response: Response) => {
+      response.set({
+        body: "Hi There!"
+      });
     }
   );
 

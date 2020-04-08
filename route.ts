@@ -1,13 +1,13 @@
-import { ServerRequest, Response } from "https://deno.land/std@v0.36.0/http/server.ts";
 import { RouteData } from "./route_parser.ts";
 import { Request } from "./request.ts";
+import { Response } from "./response.ts";
 import { MiddlewareContainer, Middleware, Next } from "./middleware.ts";
 
 export interface Routes {
   [path: string]: Route
 }
 
-export type RouteHandler = (request: Request) => Response;
+export type RouteHandler = (request: Request, response: Response) => void;
 
 export class Route extends MiddlewareContainer {
   private _path: string;
@@ -36,15 +36,13 @@ export class Route extends MiddlewareContainer {
     return this._method;
   }
 
-  execute(httpRequest: Request): Response {
-    let answer: Response = {};
-
+  execute(httpRequest: Request, httpResponse: Response): Response {
     if (this._method.indexOf(httpRequest.method()) > -1)  {
-      this.go(httpRequest, () => {
-        answer = this._handler(httpRequest);
+      this.go(httpRequest, httpResponse, () => {
+        this._handler(httpRequest, httpResponse);
       });
     }
 
-    return answer;
+    return httpResponse;
   }
 }

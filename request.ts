@@ -56,6 +56,10 @@ export class Request {
     return this._requestData.protocol;
   }
 
+  url() {
+    return this._requestData.url;
+  }
+
   method() {
     return this._requestData.method;
   }
@@ -72,4 +76,3 @@ export class Request {
    return this._requestData.body;
  }
 }
-

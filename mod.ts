@@ -1,11 +1,12 @@
 import { Route, Routes, RouteHandler } from "./route.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
-import { serve, serveTLS, Server, ServerRequest, Response, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.36.0/http/server.ts";
+import { serve, serveTLS, Server, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.36.0/http/server.ts";
 import { exists, existsSync } from "https://deno.land/std/fs/mod.ts";
 import * as path from "https://deno.land/std/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request, parseHttpRequest } from "./request.ts";
+import { Response } from "./response.ts";
 import { MIME } from "./mime_types.ts";
 
 export { Request, Response, Middleware, Next };
@@ -27,11 +28,8 @@ export class Rute extends MiddlewareContainer {
   private _default: Route = new Route(
     "404",
     [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
-    (request: Request) => {
-      return {
-        status: 404,
-        body: "404 Page not Found"
-      };
+    (request: Request, response: Response) => {
+      response.set(this._staticRender(request.url()));
     }
   );
 
@@ -50,7 +48,7 @@ export class Rute extends MiddlewareContainer {
     this._staticPaths.push(path);
   }
 
-  private _staticRender(url: string): Response | null {
+  private _staticRender(url: string): HTTPResponse {
     let i: number = 0;
     let urlWithoutParams = url.replace(/([#?].*)$/, "");
     let filePath: string = url == "/" ? "./index.html" : `.${urlWithoutParams}`;
@@ -64,10 +62,13 @@ export class Rute extends MiddlewareContainer {
         status: 200,
         body: Deno.readFileSync(filePath),
         headers
-      }
+      };
     }
 
-    return null;
+    return {
+      status: 404,
+      body: "404 Page not Found"
+    };
   }
 
   async getRoute(url: string): Promise<RouteInfo> {
@@ -101,16 +102,15 @@ export class Rute extends MiddlewareContainer {
       let path: string = getCleanPath(req.url);
       let routeInfo: RouteInfo = await this.getRoute(path);
       let httpRequest: Request = await parseHttpRequest(req, routeInfo.data);
-      let res:Response | null = this._staticRender(req.url);
-      let answer: Response = this._default.execute(httpRequest);
+      let httpResponse: Response = new Response();
 
       if (routeInfo.route != undefined) {
-        this.go(httpRequest, () => {
-          answer = this._staticRender(req.url) || routeInfo.route.execute(httpRequest);
+        this.go(httpRequest, httpResponse, () => {
+          routeInfo.route.execute(httpRequest, httpResponse);
         });
       }
 
-      req.respond(answer);
+      req.respond(httpResponse.get());
     }
   }
 }
