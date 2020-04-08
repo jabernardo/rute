@@ -31,8 +31,9 @@ app.addRoute(
     ["GET", "POST"],
     "/categories/{category}/pages/{page}",
     (request: Request, response: Response) => {
-      console.log(request.body());
-      
+      console.log(request.get("message"));
+      console.log(request.getAll());
+
       response.set("Hello World!");
     }
   );

@@ -1,12 +1,6 @@
 import { ServerRequest } from "https://deno.land/std@v0.36.0/http/server.ts";
 import { RouteData } from "./route_parser.ts";
 
-/**
- * TODO:
- *  - Parse body
- *
- */
-
 export interface RequestData {
   [key: string]: string;
 }
@@ -17,11 +11,11 @@ export interface RequestInfo {
   protocol: string;
   headers: Headers;
   params: RouteData;
-  body: string;
+  body: ArrayBuffer | ArrayBufferView | undefined;
 }
 
 export async function parseHttpRequest(serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
-  const body_raw =  new TextDecoder().decode(await Deno.readAll(serverRequest.body));
+  const body_raw =  await Deno.readAll(serverRequest.body);
 
   const httpRequestContent: RequestInfo = {
     url: serverRequest.url,
@@ -53,19 +47,20 @@ export class RequestParser {
 
 export class Request {
   private _requestData: RequestInfo;
-  private _parsedBody: JSON | RequestData;
+  private _parsedBody: RequestData;
 
   constructor(requestData: RequestInfo) {
     let parser: RequestParser = new RequestParser();
+    let textDecoder: TextDecoder = new TextDecoder()
 
     this._requestData = requestData;
     this._parsedBody = JSON.parse("{}");
 
     try {
-      this._parsedBody = JSON.parse(this._requestData.body);
+      this._parsedBody = JSON.parse(textDecoder.decode(this._requestData.body));
     } catch {
-       if (typeof requestData.body === "string" && this.is("x-www-form-urlencoded")) {
-         this._parsedBody = parser.formData(requestData.body);
+       if (this.is("x-www-form-urlencoded")) {
+         this._parsedBody = parser.formData(textDecoder.decode(requestData.body));
        }
     }
   }
@@ -101,7 +96,15 @@ export class Request {
     return this._requestData.headers.get(key) || fallback;
   }
 
-  body() {
+  body(): ArrayBuffer | ArrayBufferView | undefined {
+    return this._requestData.body;
+  }
+
+  get(name: string): any | null {
+    return this._parsedBody[name] || null;
+  }
+
+  getAll(): RequestData {
     return this._parsedBody;
- }
+  }
 }
