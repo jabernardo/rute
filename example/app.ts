@@ -32,9 +32,7 @@ app.addRoute(
     ["GET", "POST"],
     "/categories/{category}/pages/{page}",
     (request: Request, response: Response) => {
-      response.set({
-        body: "Hi There!"
-      });
+      response.set("Hello World!");
     }
   );
 

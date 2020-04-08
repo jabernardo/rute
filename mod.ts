@@ -29,7 +29,22 @@ export class Rute extends MiddlewareContainer {
     "404",
     [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
     (request: Request, response: Response) => {
-      response.set(this._staticRender(request.url()));
+      let i: number = 0;
+      let urlWithoutParams = request.url().replace(/([#?].*)$/, "");
+      let filePath: string = request.url() == "/" ? "./index.html" : `.${urlWithoutParams}`;
+      let filePathInfo = path.parse(filePath);
+
+      if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
+        response
+          .status(200)
+          .headers("content-type", MIME[filePathInfo.ext] || "application/octet-stream")
+          .set(Deno.readFileSync(filePath))
+         return 
+      }
+
+      response
+        .status(404)
+        .set("404 Page not Found");
     }
   );
 
@@ -46,29 +61,6 @@ export class Rute extends MiddlewareContainer {
 
   static(path: string) {
     this._staticPaths.push(path);
-  }
-
-  private _staticRender(url: string): HTTPResponse {
-    let i: number = 0;
-    let urlWithoutParams = url.replace(/([#?].*)$/, "");
-    let filePath: string = url == "/" ? "./index.html" : `.${urlWithoutParams}`;
-    let filePathInfo = path.parse(filePath);
-
-    if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
-      let headers: Headers = new Headers();
-      headers.append("content-type", MIME[filePathInfo.ext] || "application/octet-stream");
-
-      return {
-        status: 200,
-        body: Deno.readFileSync(filePath),
-        headers
-      };
-    }
-
-    return {
-      status: 404,
-      body: "404 Page not Found"
-    };
   }
 
   async getRoute(url: string): Promise<RouteInfo> {
