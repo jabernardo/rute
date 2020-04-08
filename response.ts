@@ -23,7 +23,9 @@ export class Response {
 
   set(body: Uint8Array | object | string): Response {
     if (typeof body === "object" && !(body instanceof Uint8Array)) {
+      this.headers("content-type", "application/json");
       this._body = JSON.stringify(body);
+      
       return this;
     }
 

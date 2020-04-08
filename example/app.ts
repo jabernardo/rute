@@ -12,7 +12,6 @@ app.use((req: Request, res: Response, next: Next) => {
 
 let d: Middleware = (req: Request, res: Response, n: Next) => {
     console.log('begin');
-    console.log(req);
     n();
     console.log('end');
   };
@@ -32,6 +31,8 @@ app.addRoute(
     ["GET", "POST"],
     "/categories/{category}/pages/{page}",
     (request: Request, response: Response) => {
+      console.log(request.body());
+      
       response.set("Hello World!");
     }
   );

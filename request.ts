@@ -37,11 +37,37 @@ export async function parseHttpRequest(serverRequest: ServerRequest, params: Rou
   });
 }
 
+export class RequestParser {
+  formData(data: string): RequestData {
+    let params: RequestData = {};
+
+    data.split("&").forEach(param => {
+      let [ key, val ] = param.split("=");
+
+      params[key] = val;
+    });
+
+    return params;
+  }
+}
+
 export class Request {
   private _requestData: RequestInfo;
+  private _parsedBody: JSON | RequestData;
 
   constructor(requestData: RequestInfo) {
+    let parser: RequestParser = new RequestParser();
+
     this._requestData = requestData;
+    this._parsedBody = JSON.parse("{}");
+
+    try {
+      this._parsedBody = JSON.parse(this._requestData.body);
+    } catch {
+       if (typeof requestData.body === "string" && this.is("x-www-form-urlencoded")) {
+         this._parsedBody = parser.formData(requestData.body);
+       }
+    }
   }
 
   params(key: string = "", fallback: any = null):any {
@@ -64,15 +90,18 @@ export class Request {
     return this._requestData.method;
   }
 
-  headers(key: string = "", fallback: any = null): Headers {
-    if (key) {
-      return this._requestData.headers.get(key) || fallback;
-    }
+  is(contentType: string): boolean {
+    let contentTypeTest: RegExp = new RegExp(`^.*/${ contentType.toLowerCase() }`);
+    let header: string = this.header("content-type", "");
+    console.log(header, contentTypeTest, contentTypeTest.test(header));
+    return contentTypeTest.test(header);
+  }
 
-    return this._requestData.headers;
+  header(key: string, fallback: any = null): string {
+    return this._requestData.headers.get(key) || fallback;
   }
 
   body() {
-   return this._requestData.body;
+    return this._parsedBody;
  }
 }
