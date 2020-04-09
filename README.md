@@ -17,7 +17,7 @@ import { Rute, Request, Response, Middleware, Next } from "https://raw.githubuse
 
 ```sh
 
-deno --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/master/example/app.ts
+deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/master/example/app.ts
 
 ```
 
@@ -37,8 +37,8 @@ app.listen({ port: 8000 });
 
 ```
 
-## Contibuting to TheF!
-To contribute to TheF! Make sure to give a star and forked this repository.
+## Contibuting to Rute!
+To contribute to Rute! Make sure to give a star and forked this repository.
 
 Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
