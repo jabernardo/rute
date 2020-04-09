@@ -4,14 +4,15 @@ export interface RouteData {
 
 export function getCleanPath(uri: string): string {
   return "/" + uri
-    .replace(/^([\/])/g, "")
-    .replace(/([\/])$/g, "");
+    .replace(/([#?].*)$/, "")
+    .replace(/^([\/])/, "")
+    .replace(/([\/])$/, "");
 }
 
 export function getRouteTranslation(route: string): string {
   return route
     .replace(/\//ig, '\/')
-    .replace(/\[([^\[]+)\]/ig, '(?:$1)?')
+    // .replace(/\[([^\[]+)\]/ig, '(?:$1)?')
     .replace(/{(\w*?)}/ig, '{$1:([^\/#?]+)}');
 }
 
@@ -47,13 +48,7 @@ export function getRouteData(translatedRoute: string, testRouteData: RegExpMatch
 
 export function test(route: string, path: string): RouteData | null {
   let translatedRoute: string = `^${ getRouteTranslation(route) }$`;
-  let testRouteData: RegExpMatchArray | null = path.match(getRouteTest(translatedRoute));
+  let testRouteData: RegExpMatchArray | null = getCleanPath(path).match(getRouteTest(translatedRoute));
 
   return testRouteData ? getRouteData(translatedRoute, testRouteData) : null;
 }
-
-// const test_route: string = "/categories/{category}/pages/{page:(\\D+)}";
-// const test_path: string = "/categories/books/pages/10";
-
-// console.log(test(test_route, test_path));
-
