@@ -11,17 +11,20 @@ app.static("./public");
 /**
  * Middleware example
  */
-app.use((req: Request, res: Response, n: Next) => {
+app.use(async (req: Request, res: Response, n: Next) => {
   console.log("[begin] middleware");
-  n();
+  await n();
   console.log("[end] middleware");
 });
 
 /**
  * Index page
  */
-app.add(["GET", "POST"], "/", (req: Request, res: Response) => {
-  res.set({"message": "Hello World!"});
+app.add(["GET", "POST"], "/", async (req: Request, res: Response) => {
+  let data = await fetch("https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty");
+  let json = await data.json();
+  console.log(json);
+  res.set(json);
 });
 
 /**

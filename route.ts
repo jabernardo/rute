@@ -22,10 +22,8 @@ export class Route extends MiddlewareContainer {
     this._handler = handler;
   }
 
-  use(fn: Middleware): Route {
-    super.use(fn);
-
-    return this;
+  async use(fn: Middleware) {
+    await super.use(fn);
   }
 
   path(): string {
@@ -36,17 +34,17 @@ export class Route extends MiddlewareContainer {
     return this._method;
   }
 
-  execute(httpRequest: Request, httpResponse: Response): Response {
-    this.go(httpRequest, httpResponse, () => {
+  async execute(httpRequest: Request, httpResponse: Response) {
+    // await this._handler(httpRequest, httpResponse);
+
+    await this.go(httpRequest, httpResponse, async () => {
       if (this._method.indexOf(httpRequest.method()) > -1)  {
-        this._handler(httpRequest, httpResponse);
+        await this._handler(httpRequest, httpResponse);
       } else {
         httpResponse
           .status(404)
           .set("404 Page Not Found");
       }
     });
-
-    return httpResponse;
   }
 }
