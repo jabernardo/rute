@@ -21,6 +21,9 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: denolib/setup-deno@v1.3.0
+    
+    - name: Install deno
+      run: curl -fsSL https://deno.land/x/install/install.sh | sh
       
     # Runs a single command using the runners shell
     - name: Run test
