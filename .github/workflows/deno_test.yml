@@ -15,5 +15,5 @@ jobs:
       - uses: denolib/setup-deno@master
         with:
           deno-version: 0.x
-      - run: deno run https://deno.land/std/examples/welcome.ts
+      - run: deno test
 
