@@ -37,11 +37,15 @@ export class Route extends MiddlewareContainer {
   }
 
   execute(httpRequest: Request, httpResponse: Response): Response {
-    if (this._method.indexOf(httpRequest.method()) > -1)  {
-      this.go(httpRequest, httpResponse, () => {
+    this.go(httpRequest, httpResponse, () => {
+      if (this._method.indexOf(httpRequest.method()) > -1)  {
         this._handler(httpRequest, httpResponse);
-      });
-    }
+      } else {
+        httpResponse
+          .status(404)
+          .set("404 Page Not Found");
+      }
+    });
 
     return httpResponse;
   }

@@ -5,6 +5,8 @@ export interface RequestData {
   [key: string]: string;
 }
 
+// TODO: Add query params
+
 export interface RequestInfo {
   url: string;
   method: string;

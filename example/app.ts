@@ -20,6 +20,8 @@ app.addRoute(
     "GET",
     "/",
     (request: Request, response: Response) => {
+      console.log(request.body());
+      
       response.set({
         body: "Hi There!"
       });
