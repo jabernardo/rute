@@ -102,7 +102,7 @@ export class Rute extends MiddlewareContainer {
         });
       }
 
-      req.respond(httpResponse.get());
+      req.respond(httpResponse.raw());
     }
   }
 }

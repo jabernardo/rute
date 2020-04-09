@@ -33,7 +33,7 @@ export class Response {
     return this;
   }
 
-  get(): HTTPResponse {
+  raw(): HTTPResponse {
     let headers: Headers = this._headers;
 
     return {
