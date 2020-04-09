@@ -41,6 +41,23 @@ app.listen({ port: 8000 });
 
 ```
 
+## Built-in await/async support!
+
+```ts
+
+/**
+ * Index page
+ */
+app.add(["GET", "POST"], "/", async (req: Request, res: Response) => {
+  let data = await fetch("https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty");
+  let json = await data.json();
+  console.log(json);
+  res.set(json);
+});
+
+
+```
+
 ## Contibuting to Rute!
 To contribute to Rute! Make sure to give a star and forked this repository.
 

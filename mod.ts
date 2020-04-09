@@ -96,19 +96,9 @@ export class Rute extends MiddlewareContainer {
       let httpRequest: Request = await parseHttpRequest(addr, req, routeInfo.data);
       let httpResponse: Response = new Response();
 
-      // let root = this;
-
-      await ((httpRequest, httpResponse) => {
-        return new Promise(async (res) => {
-          // res(await routeInfo.route.execute(httpRequest, httpResponse));
-          if (routeInfo.route != undefined) {
-            await this.go(httpRequest, httpResponse, async () => {
-              // routeInfo.route.execute(httpRequest, httpResponse);
-              res(await routeInfo.route.execute(httpRequest, httpResponse));
-            });
-          }
-        });
-      })(httpRequest, httpResponse);
+      await this.go(httpRequest, httpResponse, async () => {
+        await routeInfo.route.execute(httpRequest, httpResponse);
+      });
 
       // if (routeInfo.route != undefined) {
       //   this.go(httpRequest, httpResponse, () => {
