@@ -90,7 +90,7 @@ export class Request {
   is(contentType: string): boolean {
     let contentTypeTest: RegExp = new RegExp(`^.*/${ contentType.toLowerCase() }`);
     let header: string = this.header("content-type", "");
-    console.log(header, contentTypeTest, contentTypeTest.test(header));
+    
     return contentTypeTest.test(header);
   }
 
