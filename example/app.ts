@@ -1,44 +1,38 @@
 import { Rute, Request, Response, Middleware, Next } from "../mod.ts";
 
-const app: Rute = new Rute()
+const app: Rute = new Rute();
 
+/**
+ * Static file server
+ *   http://localhost:8000/public/style.css
+ */
 app.static("./public");
 
-app.use((req: Request, res: Response, next: Next) => {
-  console.log("start");
-  next();
-  console.log("stop");
+/**
+ * Middleware example
+ */
+app.use((req: Request, res: Response, n: Next) => {
+  console.log("[begin] middleware");
+  n();
+  console.log("[end] middleware");
 });
 
-let d: Middleware = (req: Request, res: Response, n: Next) => {
-    console.log('begin');
-    n();
-    console.log('end');
-  };
+/**
+ * Index page
+ */
+app.add(["GET", "POST"], "/", (req: Request, res: Response) => {
+  res.set({"message": "Hello World!"});
+});
 
-app.add(
-    "GET",
-    "/",
-    (request: Request, response: Response) => {
-      console.log(request.body());
-      
-      response.set({
-        body: "Hi There!"
-      });
-    },
-    d
-  )
+/**
+ * Simple greeting
+ *   http://localhost:8000/hello-yourname
+ */
+app.add("GET", "/hello-{name}", (req: Request, res: Response) => {
+  res.set(`Hello, ${ req.params("name") } !`);
+});
 
-app.add(
-    ["GET", "POST"],
-    "/categories/{category}/pages/{page}",
-    (request: Request, response: Response) => {
-      console.log(request.get("message"));
-      console.log(request.getAll());
-
-      response.set("Hello World!");
-    }
-  );
-
-
+/**
+ * LET'S GO!!!
+ */
 app.listen({ port: 8000 });
