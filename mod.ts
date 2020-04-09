@@ -2,6 +2,7 @@ import { Route, Routes, RouteHandler } from "./route.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, serveTLS, Server, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.36.0/http/server.ts";
 import { exists, existsSync } from "https://deno.land/std/fs/mod.ts";
+import { Cookie } from "https://deno.land/std/http/cookie.ts";
 import * as path from "https://deno.land/std/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
@@ -9,7 +10,7 @@ import { Request, parseHttpRequest } from "./request.ts";
 import { Response } from "./response.ts";
 import { MIME } from "./mime_types.ts";
 
-export { Request, Response, Middleware, Next };
+export { Request, Response, Middleware, Next, Cookie };
 
 export interface RouteInfo {
   path: string,
@@ -37,7 +38,7 @@ export class Rute extends MiddlewareContainer {
       if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
         response
           .status(200)
-          .headers("content-type", MIME[filePathInfo.ext] || "application/octet-stream")
+          .header("content-type", MIME[filePathInfo.ext] || "application/octet-stream")
           .set(Deno.readFileSync(filePath))
          return 
       }
