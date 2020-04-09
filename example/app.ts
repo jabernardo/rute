@@ -16,7 +16,7 @@ let d: Middleware = (req: Request, res: Response, n: Next) => {
     console.log('end');
   };
 
-app.addRoute(
+app.add(
     "GET",
     "/",
     (request: Request, response: Response) => {
@@ -29,7 +29,7 @@ app.addRoute(
     d
   )
 
-app.addRoute(
+app.add(
     ["GET", "POST"],
     "/categories/{category}/pages/{page}",
     (request: Request, response: Response) => {

@@ -48,7 +48,7 @@ export class Rute extends MiddlewareContainer {
     }
   );
 
-  addRoute(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  add(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
     let route: Route = new Route(path, method, handler);
 
