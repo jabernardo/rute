@@ -8,11 +8,12 @@ import { Route, RouteHandler } from "./route.ts";
 Deno.test("[router: normal mode]", async function parseTest(): Promise<void> {
   const responseTest: Response = new Response();
   const requestInfo: RequestInfo = {
-    url: "/",
+    url: new URL("http://localhost"),
     method: "GET",
     protocol: "HTTP/1.1",
     headers: new Headers(),
     body: undefined,
+    query: {},
     params: {},
   }
   const requestTest: Request = new Request(requestInfo);
