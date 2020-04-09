@@ -30,8 +30,8 @@ export class Rute extends MiddlewareContainer {
     [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
     (request: Request, response: Response) => {
       let i: number = 0;
-      let urlWithoutParams = request.url().replace(/([#?].*)$/, "");
-      let filePath: string = request.url() == "/" ? "./index.html" : `.${urlWithoutParams}`;
+      let urlWithoutParams = request.url().pathname.replace(/([#?].*)$/, "");
+      let filePath: string = request.url().pathname == "/" ? "./index.html" : `.${urlWithoutParams}`;
       let filePathInfo = path.parse(filePath);
 
       if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
@@ -93,7 +93,7 @@ export class Rute extends MiddlewareContainer {
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
       let routeInfo: RouteInfo = await this.getRoute(path);
-      let httpRequest: Request = await parseHttpRequest(req, routeInfo.data);
+      let httpRequest: Request = await parseHttpRequest(addr, req, routeInfo.data);
       let httpResponse: Response = new Response();
 
       if (routeInfo.route != undefined) {

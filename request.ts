@@ -1,31 +1,41 @@
-import { ServerRequest } from "https://deno.land/std@v0.36.0/http/server.ts";
+import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.36.0/http/server.ts";
 import { RouteData } from "./route_parser.ts";
 
 export interface RequestData {
   [key: string]: string;
 }
 
-// TODO: Add query params
-
 export interface RequestInfo {
-  url: string;
+  url: URL;
   method: string;
   protocol: string;
   headers: Headers;
   params: RouteData;
+  query: RequestData;
   body: ArrayBuffer | ArrayBufferView | undefined;
 }
 
-export async function parseHttpRequest(serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
+export async function parseHttpRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
   const body_raw =  await Deno.readAll(serverRequest.body);
 
+  const protocol = (typeof addr === "object" && "certFile" in addr) ? "https://" : "http://";
+
+  const [ hostname, port ] = (typeof addr === "string") 
+    ? addr.split(":")
+    : [ "hostname" in addr ? addr["hostname"] : "localhost", addr.port ];
+
+  // TODO: Currently deno doesn't support auth with ServerRequest
+  const hostUrlString = `${protocol}${hostname}${ port == "443" || port == "80" ? "" : ":" + port }${serverRequest.url}`;
+  const hostUrl = new URL(hostUrlString);
+
   const httpRequestContent: RequestInfo = {
-    url: serverRequest.url,
+    url: hostUrl,
     method: serverRequest.method,
     protocol: serverRequest.proto,
     headers: serverRequest.headers,
     body: body_raw,
     params: params,
+    query: new RequestParser().urlSearchQuery(hostUrl.search)
   }
 
   return new Promise(resolve => {
@@ -34,7 +44,20 @@ export async function parseHttpRequest(serverRequest: ServerRequest, params: Rou
 }
 
 export class RequestParser {
-  formData(data: string): RequestData {
+  urlSearchQuery(data: string): RequestData {
+    let params: RequestData = {};
+    data = data[0] == "?" ? data.substr(1, data.length) : data;
+
+    data.split("&").forEach(param => {
+      let [ key, val ] = param.split("=");
+
+      params[key] = val;
+    });
+
+    return params;
+  }
+
+  formDataUrlEncoded(data: string): RequestData {
     let params: RequestData = {};
 
     data.split("&").forEach(param => {
@@ -62,7 +85,7 @@ export class Request {
       this._parsedBody = JSON.parse(textDecoder.decode(this._requestData.body));
     } catch {
        if (this.is("x-www-form-urlencoded")) {
-         this._parsedBody = parser.formData(textDecoder.decode(requestData.body));
+         this._parsedBody = parser.formDataUrlEncoded(textDecoder.decode(requestData.body));
        }
     }
   }
@@ -75,11 +98,19 @@ export class Request {
     return this._requestData.params;
   }
 
+  query(key: string = "", fallback: any = null):any {
+    if (key) {
+      return this._requestData.query[key] || fallback;
+    }
+
+    return this._requestData.query;
+  }
+
   protocol() {
     return this._requestData.protocol;
   }
 
-  url() {
+  url(): URL {
     return this._requestData.url;
   }
 
