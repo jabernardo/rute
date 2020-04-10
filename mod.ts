@@ -53,6 +53,10 @@ export class Rute extends MiddlewareContainer {
     let routePath = path != "/" ? getCleanPath(path) : "/";
     let route: Route = new Route(path, method, handler);
 
+    if (typeof this._routes[routePath] !== "undefined"){
+      throw new Error(`${routePath} already exists.`);
+    }
+
     middlewares.forEach((middleware: Middleware) => {
       route.use(middleware);
     });
