@@ -2,6 +2,8 @@ import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@
 import { Cookies, getCookies } from "https://deno.land/std@v0.39.0/http/cookie.ts";
 import { RouteData } from "./route_parser.ts";
 
+import Conn = Deno.Conn
+
 export interface HTTPMethods {
   [key: string]: string;
 }
@@ -23,6 +25,7 @@ export interface RequestData {
 }
 
 export interface RequestInfo {
+  conn: Conn;
   url: URL;
   method: string;
   protocol: string;
@@ -50,6 +53,7 @@ export async function parseHttpRequest(addr: string | HTTPOptions | HTTPSOptions
   serverRequest.headers.set("cookie", serverRequest.headers.get("set-cookie") || "");
 
   const httpRequestContent: RequestInfo = {
+    conn: serverRequest.conn,
     url: hostUrl,
     method: serverRequest.method,
     protocol: serverRequest.proto,
@@ -126,6 +130,10 @@ export class Request {
     }
 
     return this._requestData.query;
+  }
+
+  get connection() {
+    return this._requestData.conn;
   }
 
   get protocol() {

@@ -9,6 +9,7 @@ import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request, parseHttpRequest, HTTP } from "./request.ts";
 import { Response } from "./response.ts";
 import { MIME } from "./mime_types.ts";
+import { Logger } from "./middlewares/logger.ts";
 
 export { Request, Response, Middleware, Next, Cookie, HTTP };
 
@@ -24,6 +25,8 @@ export class Rute extends MiddlewareContainer {
 
   constructor() {
     super();
+
+    this.use(Logger);
   }
 
   private _default: Route = new Route(
@@ -130,6 +133,8 @@ export class Rute extends MiddlewareContainer {
     const s: Server = (typeof addr !== "string" && "certFile" in addr) 
       ? serveTLS(addr)
       : serve(addr);
+
+    console.log(`[rute] Listening on`, addr);
 
     for await (const req of s) {
       let path: string = getCleanPath(req.url);

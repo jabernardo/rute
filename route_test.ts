@@ -7,24 +7,11 @@ import { Route, RouteHandler } from "./route.ts";
 
 Deno.test("[router: normal mode]", async function parseTest(): Promise<void> {
   const responseTest: Response = new Response();
-  const requestInfo: RequestInfo = {
-    url: new URL("http://localhost"),
-    method: "GET",
-    protocol: "HTTP/1.1",
-    headers: new Headers(),
-    cookies:  {},
-    body: undefined,
-    query: {},
-    params: {},
-  }
-  const requestTest: Request = new Request(requestInfo);
 
-  const home: Route = new Route("/", "GET", (req: Request, res: Response) => {
-    res.cookie({ name: "auth", value: "1234" });
-    res.set("Hello World!");
-  });
-
-  home.execute(requestTest, responseTest);
+  responseTest
+    .status(200)
+    .cookie({name: "auth", value: "1234"})
+    .set("Hello World!");
 
   assertEquals(responseTest.body, "Hello World!");
   assertEquals(responseTest.code, 200);
