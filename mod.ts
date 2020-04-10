@@ -6,11 +6,11 @@ import { Cookie } from "https://deno.land/std@v0.39.0/http/cookie.ts";
 import * as path from "https://deno.land/std@v0.39.0/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
-import { Request, parseHttpRequest } from "./request.ts";
+import { Request, parseHttpRequest, HTTP } from "./request.ts";
 import { Response } from "./response.ts";
 import { MIME } from "./mime_types.ts";
 
-export { Request, Response, Middleware, Next, Cookie };
+export { Request, Response, Middleware, Next, Cookie, HTTP };
 
 export interface RouteInfo {
   path: string,
@@ -28,7 +28,7 @@ export class Rute extends MiddlewareContainer {
 
   private _default: Route = new Route(
     "404",
-    [ "GET", "POST", "DELETE", "UPDATE", "PUT", "OPTIONS", "HEAD" ],
+    [ HTTP.GET, HTTP.HEAD, HTTP.POST, HTTP.PUT, HTTP.DELETE, HTTP.DELETE, HTTP.CONNECT, HTTP.OPTIONS, HTTP.TRACE, HTTP.PATCH ],
     (request: Request, response: Response) => {
       let i: number = 0;
       let urlWithoutParams = request.url.pathname.replace(/([#?].*)$/, "");
@@ -49,7 +49,7 @@ export class Rute extends MiddlewareContainer {
     }
   );
 
-  add(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  route(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
     let route: Route = new Route(path, method, handler);
 
@@ -58,6 +58,42 @@ export class Rute extends MiddlewareContainer {
     });
 
     this._routes[routePath] = route;
+  }
+
+  get(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.GET, path, handler, ...middlewares);
+  }
+
+  head(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.HEAD, path, handler, ...middlewares);
+  }
+
+  post(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.POST, path, handler, ...middlewares);
+  }
+
+  put(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.PUT, path, handler, ...middlewares);
+  }
+
+  delete(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.DELETE, path, handler, ...middlewares);
+  }
+
+  connect(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.CONNECT, path, handler, ...middlewares);
+  }
+
+  options(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.OPTIONS, path, handler, ...middlewares);
+  }
+
+  trace(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.TRACE, path, handler, ...middlewares);
+  }
+
+  patch(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.PATCH, path, handler, ...middlewares);
   }
 
   static(path: string) {

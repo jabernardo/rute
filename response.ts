@@ -68,10 +68,15 @@ export class Response {
 
     headers.set("set-cookie", cookieHeader);
 
-    return {
+    let compiledResponse: HTTPResponse = {
       status: this._status,
-      body: this._body,
       headers
     };
+
+    if (this._body) {
+      compiledResponse.body = this._body;
+    }
+
+    return compiledResponse;
   }
 }

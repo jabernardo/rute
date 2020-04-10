@@ -36,7 +36,7 @@ import { Rute, Request, Response } from "https://raw.githubusercontent.com/jaber
 
 const app: Rute = new Rute();
 
-app.add(["GET", "POST"], "/", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.set({"message": "Hello World!"});
 });
 
@@ -51,7 +51,7 @@ app.listen({ port: 8000 });
 /**
  * Index page
  */
-app.add(["GET", "POST"], "/", async (req: Request, res: Response) => {
+app.route(["GET", "POST"], "/", async (req: Request, res: Response) => {
   let data = await fetch("https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty");
   let json = await data.json();
   console.log(json);

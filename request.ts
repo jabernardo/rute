@@ -2,6 +2,22 @@ import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@
 import { Cookies, getCookies } from "https://deno.land/std@v0.39.0/http/cookie.ts";
 import { RouteData } from "./route_parser.ts";
 
+export interface HTTPMethods {
+  [key: string]: string;
+}
+
+export const HTTP: HTTPMethods = {
+  GET: "GET",
+  HEAD: "HEAD",
+  POST: "POST",
+  PUT: "PUT",
+  DELETE: "DELETE",
+  CONNECT: "CONNECT",
+  OPTIONS: "OPTIONS",
+  TRACE: "TRACE",
+  PATCH: "PATCH"
+}
+
 export interface RequestData {
   [key: string]: string;
 }

@@ -1,4 +1,4 @@
-import { Rute, Request, Response, Middleware, Next } from "../mod.ts";
+import { Rute, Request, Response, Middleware, Next, HTTP } from "../mod.ts";
 
 const app: Rute = new Rute();
 
@@ -20,20 +20,30 @@ app.use(async (req: Request, res: Response, n: Next) => {
 /**
  * Index page
  */
-app.add(["GET", "POST"], "/", async (req: Request, res: Response) => {
+app.get("/", async (req: Request, res: Response) => {
   let data = await fetch("https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty");
   let json = await data.json();
-  console.log(json);
+  res.cookie({ name: "test", value: "hello world!!!!" });
   res.set(json);
 });
+
+/**
+ * A certain specific route middleware
+ *
+ */
+const specificRouteMiddleware = async (req: Request, res: Response, n: Next) => {
+  console.log("[begin] route middleware");
+  await n();
+  console.log("[end] route middleware");
+};
 
 /**
  * Simple greeting
  *   http://localhost:8000/hello-yourname
  */
-app.add("GET", "/hello-{name}", (req: Request, res: Response) => {
+app.route([ HTTP.GET, HTTP.POST ], "/hello-{name}", (req: Request, res: Response) => {
   res.set(`Hello, ${ req.params("name") } !`);
-});
+}, specificRouteMiddleware);
 
 /**
  * LET'S GO!!!
