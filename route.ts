@@ -26,19 +26,17 @@ export class Route extends MiddlewareContainer {
     await super.use(fn);
   }
 
-  path(): string {
+  get path(): string {
     return this._path;
   }
 
-  method(): string | Array<string> {
+  get method(): string | Array<string> {
     return this._method;
   }
 
   async execute(httpRequest: Request, httpResponse: Response) {
-    // await this._handler(httpRequest, httpResponse);
-
     await this.go(httpRequest, httpResponse, async () => {
-      if (this._method.indexOf(httpRequest.method()) > -1)  {
+      if (this._method.indexOf(httpRequest.method) > -1)  {
         await this._handler(httpRequest, httpResponse);
       } else {
         httpResponse

@@ -30,6 +30,9 @@ export async function parseHttpRequest(addr: string | HTTPOptions | HTTPSOptions
   const hostUrlString = `${protocol}${hostname}${ port == "443" || port == "80" ? "" : ":" + port }${serverRequest.url}`;
   const hostUrl = new URL(hostUrlString);
 
+  // TODO: Deno is checking for `cookie` instead of set-cookie
+  serverRequest.headers.set("cookie", serverRequest.headers.get("set-cookie") || "");
+
   const httpRequestContent: RequestInfo = {
     url: hostUrl,
     method: serverRequest.method,
@@ -109,15 +112,15 @@ export class Request {
     return this._requestData.query;
   }
 
-  protocol() {
+  get protocol() {
     return this._requestData.protocol;
   }
 
-  url(): URL {
+  get url(): URL {
     return this._requestData.url;
   }
 
-  method() {
+  get method(): string {
     return this._requestData.method;
   }
 

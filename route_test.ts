@@ -12,7 +12,7 @@ Deno.test("[router: normal mode]", async function parseTest(): Promise<void> {
     method: "GET",
     protocol: "HTTP/1.1",
     headers: new Headers(),
-    cookies: {},
+    cookies:  {},
     body: undefined,
     query: {},
     params: {},
@@ -20,11 +20,13 @@ Deno.test("[router: normal mode]", async function parseTest(): Promise<void> {
   const requestTest: Request = new Request(requestInfo);
 
   const home: Route = new Route("/", "GET", (req: Request, res: Response) => {
+    res.cookie({ name: "auth", value: "1234" });
     res.set("Hello World!");
   });
 
   home.execute(requestTest, responseTest);
 
-  assertEquals(responseTest.raw().body,  "Hello World!");
-  assertEquals(responseTest.raw().status,  200);
+  assertEquals(responseTest.body, "Hello World!");
+  assertEquals(responseTest.code, 200);
+  assertEquals(responseTest.cookies, { "auth": "1234" });
 });
