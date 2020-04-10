@@ -1,5 +1,5 @@
-import { Response as HTTPResponse } from "https://deno.land/std@v0.36.0/http/server.ts";
-import { Cookie, setCookie } from "https://deno.land/std/http/cookie.ts";
+import { Response as HTTPResponse } from "https://deno.land/std@v0.39.0/http/server.ts";
+import { Cookie, setCookie } from "https://deno.land/std@v0.39.0/http/cookie.ts";
 
 export class Response {
   private _status: number;

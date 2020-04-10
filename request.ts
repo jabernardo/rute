@@ -1,4 +1,5 @@
-import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.36.0/http/server.ts";
+import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.39.0/http/server.ts";
+import { Cookies, getCookies } from "https://deno.land/std@v0.39.0/http/cookie.ts";
 import { RouteData } from "./route_parser.ts";
 
 export interface RequestData {
@@ -10,6 +11,7 @@ export interface RequestInfo {
   method: string;
   protocol: string;
   headers: Headers;
+  cookies: Cookies;
   params: RouteData;
   query: RequestData;
   body: ArrayBuffer | ArrayBufferView | undefined;
@@ -33,6 +35,7 @@ export async function parseHttpRequest(addr: string | HTTPOptions | HTTPSOptions
     method: serverRequest.method,
     protocol: serverRequest.proto,
     headers: serverRequest.headers,
+    cookies: getCookies(serverRequest),
     body: body_raw,
     params: params,
     query: new RequestParser().urlSearchQuery(hostUrl.search)
@@ -127,6 +130,10 @@ export class Request {
 
   header(key: string, fallback: any = null): string {
     return this._requestData.headers.get(key) || fallback;
+  }
+
+  cookie(key: string, fallback: any = null): string {
+    return this._requestData.cookies[key] || fallback;
   }
 
   body(): ArrayBuffer | ArrayBufferView | undefined {

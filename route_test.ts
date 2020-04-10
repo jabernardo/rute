@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@v0.39.0/testing/asserts.ts";
 
 import { Response } from "./response.ts";
 import { Request, RequestInfo } from "./request.ts";
@@ -12,6 +12,7 @@ Deno.test("[router: normal mode]", async function parseTest(): Promise<void> {
     method: "GET",
     protocol: "HTTP/1.1",
     headers: new Headers(),
+    cookies: {},
     body: undefined,
     query: {},
     params: {},
