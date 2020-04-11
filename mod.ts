@@ -19,6 +19,10 @@ export interface RouteInfo {
   route: Route
 }
 
+/**
+ * Rute class application
+ *
+ */
 export class Rute extends MiddlewareContainer {
   private _routes: Routes = {};
   private _staticPaths: string[] = [];
@@ -29,6 +33,12 @@ export class Rute extends MiddlewareContainer {
     this.use(Logger);
   }
 
+  /**
+   * Static handler
+   *
+   * @type Route
+   *
+   */
   private _default: Route = new Route(
     "404",
     [ HTTP.GET, HTTP.HEAD, HTTP.POST, HTTP.PUT, HTTP.DELETE, HTTP.DELETE, HTTP.CONNECT, HTTP.OPTIONS, HTTP.TRACE, HTTP.PATCH ],
@@ -52,6 +62,16 @@ export class Rute extends MiddlewareContainer {
     }
   );
 
+  /**
+   * Route path
+   *
+   * @param   method       string | Array<string> Request method
+   * @param   path         string                 URL path
+   * @param   handler      RouteHandler           Callback for route
+   * @param   middlewares  Middleware[]           Route middlewares
+   * @return  void
+   *
+   */
   route(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
     let route: Route = new Route(path, method, handler);
@@ -67,46 +87,146 @@ export class Rute extends MiddlewareContainer {
     this._routes[routePath] = route;
   }
 
+  /**
+   * GET Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   get(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.GET, path, handler, ...middlewares);
   }
 
+  /**
+   * HEAD Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   head(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.HEAD, path, handler, ...middlewares);
   }
 
+  /**
+   * POST Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   post(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.POST, path, handler, ...middlewares);
   }
 
+  /**
+   * PUT Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   put(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.PUT, path, handler, ...middlewares);
   }
 
+  /**
+   * DELETE Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   delete(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.DELETE, path, handler, ...middlewares);
   }
 
+  /**
+   * CONNECT Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   connect(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.CONNECT, path, handler, ...middlewares);
   }
 
+  /**
+   * OPTIONS Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   options(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.OPTIONS, path, handler, ...middlewares);
   }
 
+  /**
+   * TRACE Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   trace(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.TRACE, path, handler, ...middlewares);
   }
 
+  /**
+   * PATCH Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
   patch(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     this.route(HTTP.PATCH, path, handler, ...middlewares);
   }
 
+  /**
+   * Add static path
+   *
+   * @example
+   *
+   *   const app = new Rute();
+   *   app.static("./static");
+   *
+   * @param   path   string   Folder path
+   * @return  void
+   *
+   */
   static(path: string) {
     this._staticPaths.push(path);
   }
 
+  /**
+   * Get path route
+   *
+   * @param   url   string   URL Path
+   * @return  Promise<RouteInfo>
+   *
+   */
   async getRoute(url: string): Promise<RouteInfo> {
     let routeObj = this._routes["404"] || this._default;
     let data: RouteData | null = <RouteData>{};
@@ -129,6 +249,20 @@ export class Rute extends MiddlewareContainer {
     });
   }
 
+  /**
+   * Serve and listen
+   *
+   * To enable TLS and another options
+   * see: https://deno.land/std/http/
+   * 
+   * @example
+   *    const app = new Rute();
+   *    app.listen("80")
+   *
+   * @param   addr  string | HTTPOptions | HTTPSOptions
+   * @return  Promise<void>
+   *
+   */
   async listen(addr: string | HTTPOptions | HTTPSOptions): Promise<void> {
     const s: Server = (typeof addr !== "string" && "certFile" in addr) 
       ? serveTLS(addr)
