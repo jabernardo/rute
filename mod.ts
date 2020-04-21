@@ -11,6 +11,8 @@ import { Response } from "./response.ts";
 import { MIME } from "./mime_types.ts";
 import { Logger } from "./middlewares/logger.ts";
 
+import { defaultPage } from "./pages/default.ts";
+
 export { Request, Response, Middleware, Next, Cookie, HTTP };
 
 export interface RouteInfo {
@@ -56,7 +58,7 @@ export class Rute extends MiddlewareContainer {
 
       response
         .status(404)
-        .set("404 Page not Found");
+        .set(defaultPage("404 Page not Found", "You're lost! The page you are looking for is not available."));
     }
   );
 
