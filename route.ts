@@ -23,18 +23,18 @@ export type RouteHandler = (request: Request, response: Response) => void;
  */
 export class Route extends MiddlewareContainer {
   private _path: string;
-  private _method: string | Array<string>;
+  private _method: string;
   private _handler: RouteHandler;
 
   /**
    * Create an instance of Route
    *
-   * @param   path     string                  Route path
-   * @param   method   string | Array<string>  HTTP Method
+   * @param   path     string        Route path
+   * @param   method   string        HTTP Method
    * @param   hander   RouteHandler
    *
    */
-  constructor(path: string, method: string | Array<string>, handler: RouteHandler) {
+  constructor(path: string, method: string, handler: RouteHandler) {
     super();
 
     this._path = path;
@@ -76,7 +76,7 @@ export class Route extends MiddlewareContainer {
    * @return   string
    *
    */
-  get method(): string | Array<string> {
+  get method(): string {
     return this._method;
   }
 
@@ -90,13 +90,7 @@ export class Route extends MiddlewareContainer {
    */
   async execute(httpRequest: Request, httpResponse: Response) {
     await this.go(httpRequest, httpResponse, async () => {
-      if (this._method.indexOf(httpRequest.method) > -1)  {
-        await this._handler(httpRequest, httpResponse);
-      } else {
-        httpResponse
-          .status(404)
-          .set("404 Page Not Found");
-      }
+      await this._handler(httpRequest, httpResponse);
     });
   }
 }

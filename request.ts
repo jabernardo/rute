@@ -9,6 +9,7 @@ export interface HTTPMethods {
 }
 
 export const HTTP: HTTPMethods = {
+  ALL: "",
   GET: "GET",
   HEAD: "HEAD",
   POST: "POST",

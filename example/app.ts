@@ -20,7 +20,7 @@ app.use(async (req: Request, res: Response, n: Next) => {
 /**
  * Index page
  */
-app.get("/", async (req: Request, res: Response) => {
+app.all("/", async (req: Request, res: Response) => {
   let data = await fetch("https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty");
   let json = await data.json();
   res.cookie({ name: "test", value: "hello world!!!!" });
@@ -41,8 +41,12 @@ const specificRouteMiddleware = async (req: Request, res: Response, n: Next) => 
  * Simple greeting
  *   http://localhost:8000/hello-yourname
  */
-app.route([ HTTP.GET, HTTP.POST ], "/hello-{name}", (req: Request, res: Response) => {
+app.get("/hello-{name}", (req: Request, res: Response) => {
   res.set(`Hello, ${ req.params("name") } !`);
+}, specificRouteMiddleware);
+
+app.post("/hello-{name}", (req: Request, res: Response) => {
+  res.set(`Are you sure?, ${ req.params("name") } !`);
 }, specificRouteMiddleware);
 
 /**

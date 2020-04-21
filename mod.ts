@@ -39,9 +39,7 @@ export class Rute extends MiddlewareContainer {
    * @type Route
    *
    */
-  private _default: Route = new Route(
-    "404",
-    [ HTTP.GET, HTTP.HEAD, HTTP.POST, HTTP.PUT, HTTP.DELETE, HTTP.DELETE, HTTP.CONNECT, HTTP.OPTIONS, HTTP.TRACE, HTTP.PATCH ],
+  private _default: Route = new Route("default", HTTP.ALL,
     (request: Request, response: Response) => {
       let i: number = 0;
       let urlWithoutParams = request.url.pathname.replace(/([#?].*)$/, "");
@@ -65,18 +63,19 @@ export class Rute extends MiddlewareContainer {
   /**
    * Route path
    *
-   * @param   method       string | Array<string> Request method
+   * @param   method       string Request method
    * @param   path         string                 URL path
    * @param   handler      RouteHandler           Callback for route
    * @param   middlewares  Middleware[]           Route middlewares
    * @return  void
    *
    */
-  route(method: string | Array<string>, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  route(method: string, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = path != "/" ? getCleanPath(path) : "/";
     let route: Route = new Route(path, method, handler);
+    let routeKey = `${method}\\${routePath}`;
 
-    if (typeof this._routes[routePath] !== "undefined"){
+    if (typeof this._routes[routeKey] !== "undefined"){
       throw new Error(`${routePath} already exists.`);
     }
 
@@ -84,7 +83,20 @@ export class Rute extends MiddlewareContainer {
       route.use(middleware);
     });
 
-    this._routes[routePath] = route;
+    this._routes[routeKey] = route;
+  }
+
+  /**
+   * ALL Route
+   *
+   * @param   path         string         URL Path
+   * @param   handler      RouteHandler   Callback for route
+   * @param   middlewares  Middleware[]   Route middlewares
+   * @return  void
+   *
+   */
+  all(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+    this.route(HTTP.ALL, path, handler, ...middlewares);
   }
 
   /**
@@ -223,18 +235,21 @@ export class Rute extends MiddlewareContainer {
   /**
    * Get path route
    *
-   * @param   url   string   URL Path
+   * @param   method  string   Request method
+   * @param   url     string   URL Path
    * @return  Promise<RouteInfo>
    *
    */
-  async getRoute(url: string): Promise<RouteInfo> {
+  async getRoute(method: string, url: string): Promise<RouteInfo> {
     let routeObj = this._routes["404"] || this._default;
     let data: RouteData | null = <RouteData>{};
 
     for (let route in this._routes) {
-      data = test(route, url);
+      let [ routeMethod, routePath ] = route.split("\\");
 
-      if (data != null) {
+      data = test(routePath, url);
+
+      if (data != null && (routeMethod.length === 0 || method == routeMethod)) {
         routeObj = this._routes[route];
         break;
       }
@@ -272,7 +287,7 @@ export class Rute extends MiddlewareContainer {
 
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
-      let routeInfo: RouteInfo = await this.getRoute(path);
+      let routeInfo: RouteInfo = await this.getRoute(req.method, path);
       let httpRequest: Request = await parseHttpRequest(addr, req, routeInfo.data);
       let httpResponse: Response = new Response();
 
