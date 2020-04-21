@@ -11,7 +11,7 @@ import { Response } from "./response.ts";
 import { MIME } from "./mime_types.ts";
 import { Logger } from "./middlewares/logger.ts";
 
-import { defaultPage } from "./pages/default.ts";
+import { defaultPage } from "./utils/page.ts";
 
 export { Request, Response, Middleware, Next, Cookie, HTTP };
 
