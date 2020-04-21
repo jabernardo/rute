@@ -51,7 +51,7 @@ app.listen({ port: 8000 });
 /**
  * Index page
  */
-app.route(["GET", "POST"], "/", async (req: Request, res: Response) => {
+app.all("/", async (req: Request, res: Response) => {
   let data = await fetch("https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty");
   let json = await data.json();
   console.log(json);
