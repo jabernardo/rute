@@ -12,6 +12,7 @@ import { MIME } from "./mime_types.ts";
 import { Logger } from "./middlewares/logger.ts";
 
 import { defaultPage } from "./utils/page.ts";
+import { ruteLog } from "./utils/console.ts";
 
 export { Request, Response, Middleware, Next, Cookie, HTTP };
 
@@ -285,7 +286,7 @@ export class Rute extends MiddlewareContainer {
       ? serveTLS(addr)
       : serve(addr);
 
-    console.log(`[rute] Listening on`, addr);
+    ruteLog("Listening on", addr);
 
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
