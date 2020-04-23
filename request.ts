@@ -25,6 +25,34 @@ export interface RequestData {
   [key: string]: string;
 }
 
+export interface serverInfo {
+  protocol: string,
+  hostname: string,
+  port: string | number,
+  certFile?: string,
+  keyFile?: string
+}
+
+export function parseServerInfo(addr: string | HTTPOptions | HTTPSOptions): serverInfo {
+  let [ hostname, port ] = (typeof addr === "string") 
+    ? addr.split(":")
+    : [ "hostname" in addr ? addr["hostname"] : "localhost", addr.port ];
+
+  hostname = hostname || "localhost";
+
+  const certFile =  (typeof addr === "object" && "certFile" in addr) ? addr["certFile"] : undefined;
+  const keyFile =  (typeof addr === "object" && "keyFile" in addr) ? addr["keyFile"] : undefined;
+  const protocol = certFile ? "https://" : "http://";
+
+   return {
+     protocol: protocol,
+     hostname: hostname,
+     port: port,
+     certFile: certFile,
+     keyFile: keyFile
+   }
+}
+
 export interface RequestInfo {
   conn: Conn;
   url: URL;
@@ -40,12 +68,8 @@ export interface RequestInfo {
 export async function parseHttpRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
   const body_raw =  await Deno.readAll(serverRequest.body);
 
-  const protocol = (typeof addr === "object" && "certFile" in addr) ? "https://" : "http://";
-
-  const [ hostname, port ] = (typeof addr === "string") 
-    ? addr.split(":")
-    : [ "hostname" in addr ? addr["hostname"] : "localhost", addr.port ];
-
+  const { protocol, hostname, port } = parseServerInfo(addr);
+  
   // TODO: Currently deno doesn't support auth with ServerRequest
   const hostUrlString = `${protocol}${hostname}${ port == "443" || port == "80" ? "" : ":" + port }${serverRequest.url}`;
   const hostUrl = new URL(hostUrlString);
