@@ -12,6 +12,11 @@ A Simple Router for Deno
 
 - deno ^0.39.0
 
+## Versions
+
+- `master` - Latest version
+- `0.x` - Alpha
+
 ## Installation
 
 ```ts
