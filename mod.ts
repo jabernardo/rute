@@ -1,9 +1,9 @@
 import { Route, Routes, RouteHandler } from "./route.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
-import { serve, serveTLS, Server, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.39.0/http/server.ts";
-import { exists, existsSync } from "https://deno.land/std@v0.39.0/fs/mod.ts";
-import { Cookie } from "https://deno.land/std@v0.39.0/http/cookie.ts";
-import * as path from "https://deno.land/std@v0.39.0/path/mod.ts";
+import { serve, serveTLS, Server, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
+import { exists, existsSync } from "https://deno.land/std@v0.41.0/fs/mod.ts";
+import { Cookie } from "https://deno.land/std@v0.41.0/http/cookie.ts";
+import * as path from "https://deno.land/std@v0.41.0/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request, parseHttpRequest, HTTP } from "./request.ts";
