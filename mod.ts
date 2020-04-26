@@ -3,7 +3,7 @@ import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { serve, serveTLS, Server, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
 import { exists, existsSync } from "https://deno.land/std@v0.41.0/fs/mod.ts";
 import { Cookie } from "https://deno.land/std@v0.41.0/http/cookie.ts";
-import * as path from "https://deno.land/std@v0.41.0/path/mod.ts";
+import * as denoPath from "https://deno.land/std@v0.41.0/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { Request, parseHttpRequest, HTTP } from "./request.ts";
@@ -16,10 +16,14 @@ import { ruteLog } from "./utils/console.ts";
 
 export { Request, Response, Middleware, Next, Cookie, HTTP };
 
+export interface Apps {
+  [path: string]: Rute
+}
+
 export interface RouteInfo {
   path: string,
   data: RouteData,
-  route: Route
+  route: Route | Rute
 }
 
 /**
@@ -27,11 +31,14 @@ export interface RouteInfo {
  *
  */
 export class Rute extends MiddlewareContainer {
-  private _routes: Routes = {};
+  private _path: string = "/";
+  private _routes: Routes | Apps = {};
   private _staticPaths: string[] = [];
 
-  constructor() {
+  constructor(path: string = "/") {
     super();
+
+    this._path = getCleanPath(path);
 
     this.use(Logger);
   }
@@ -46,8 +53,8 @@ export class Rute extends MiddlewareContainer {
     (request: Request, response: Response) => {
       let i: number = 0;
       let urlWithoutParams = request.url.pathname.replace(/([#?].*)$/, "");
-      let filePath: string = request.url.pathname == "/" ? "./index.html" : `.${urlWithoutParams}`;
-      let filePathInfo = path.parse(filePath);
+      let filePath: string = request.url.pathname == this._path ? `./index.html` : `.${urlWithoutParams}`;
+      let filePathInfo = denoPath.parse(filePath);
 
       if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
         response
@@ -63,6 +70,19 @@ export class Rute extends MiddlewareContainer {
     }
   );
 
+  use(fn: Middleware | Rute): void {
+    if (fn instanceof Rute) {
+      this.route("", fn.path, fn);
+      return;
+    }
+
+    super.use(fn);
+  }
+
+  get path(): string {
+    return this._path;
+  }
+
   /**
    * Route path
    *
@@ -73,10 +93,13 @@ export class Rute extends MiddlewareContainer {
    * @return  void
    *
    */
-  route(method: string, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
-    let routePath = path != "/" ? getCleanPath(path) : "/";
-    let route: Route = new Route(path, method, handler);
+  route(method: string, path: string, handler: RouteHandler | Rute, ...middlewares: Middleware[]): void {
+    let routePath = getCleanPath(denoPath.join(this._path, path));
     let routeKey = `${method}\\${routePath}`;
+
+    let route: Route | Rute = handler instanceof Rute
+      ? handler
+      : new Route(path, method, handler);
 
     if (typeof this._routes[routeKey] !== "undefined"){
       throw new Error(`${routePath} already exists.`);
@@ -244,16 +267,23 @@ export class Rute extends MiddlewareContainer {
    *
    */
   async getRoute(method: string, url: string): Promise<RouteInfo> {
-    let routeObj = this._routes["404"] || this._default;
+    let routeObj: Route = <Route>(this._routes["404"] || this._default);
     let data: RouteData | null = <RouteData>{};
 
     for (let route in this._routes) {
       let [ routeMethod, routePath ] = route.split("\\");
 
+      let tempRoute: Route | Rute = this._routes[route];
+
+      if (tempRoute instanceof Rute && url.indexOf((<Rute>tempRoute).path) === 0) {
+        // console.log(url, (<Rute>tempRoute).path, url.indexOf((<Rute>tempRoute).path));
+        return await (<Rute>tempRoute).getRoute(method, url);
+      }
+
       data = test(routePath, url);
 
       if (data != null && (routeMethod.length === 0 || method == routeMethod)) {
-        routeObj = this._routes[route];
+        routeObj = <Route>tempRoute;
         break;
       }
     }
@@ -295,7 +325,7 @@ export class Rute extends MiddlewareContainer {
       let httpResponse: Response = new Response();
 
       await this.go(httpRequest, httpResponse, async () => {
-        await routeInfo.route.execute(httpRequest, httpResponse);
+        await (<Route>routeInfo.route).execute(httpRequest, httpResponse);
       });
 
       req.respond(httpResponse.compile());
