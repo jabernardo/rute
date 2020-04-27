@@ -40,7 +40,7 @@ export class Rute extends Router {
    * @return void
    *
    */
-  use(fn: Middleware | Rute): void {
+  use(fn: Middleware | Router | Rute): void {
     super.use(fn);
   }
 

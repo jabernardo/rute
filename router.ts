@@ -13,12 +13,16 @@ import { Rutes, Rute } from "./mod.ts";
 export interface RouteInfo {
   path: string,
   data: RouteData,
-  route: Route | Rute
+  route: Route | Router | Rute
+}
+
+export interface Routers {
+  [path: string]: Router
 }
 
 export class Router extends MiddlewareContainer {
   private _path: string;
-  private _routes: Routes | Rutes = {};
+  private _routes: Routes | Routers | Rutes = {};
   private _staticPaths: string[] = [];
 
   constructor(path: string = "/") {
@@ -38,13 +42,13 @@ export class Router extends MiddlewareContainer {
    * @return void
    *
    */
-  use(fn: Middleware | Rute): void {
-    if (fn instanceof Rute) {
+  use(fn: Middleware | Router | Rute): void {
+    if (fn instanceof Rute || fn instanceof Router) {
       let appPath = getCleanPath(denoPath.join(this._path, fn.path));
       let appKey = `\\${appPath}`;
 
       if (typeof this._routes[appKey] !== "undefined") {
-        throw new Error(`Can't use "${fn.name}" on "${appPath}" because route already exists.`);
+        throw new Error(`Can't use on "${appPath}" because route already exists.`);
       }
 
       this._routes[appKey] = fn;
@@ -270,10 +274,10 @@ export class Router extends MiddlewareContainer {
     for (let route in this._routes) {
       let [ routeMethod, routePath ] = route.split("\\");
 
-      let tempRoute: Route | Rute = this._routes[route];
+      let tempRoute: Route | Router | Rute = this._routes[route];
 
-      if (tempRoute instanceof Rute && url.indexOf((<Rute>tempRoute).path) === 0) {
-        return await (<Rute>tempRoute).getRoute(method, url);
+      if ((tempRoute instanceof Rute || tempRoute instanceof Router) && url.indexOf((<Rute>tempRoute).path) === 0) {
+        return await tempRoute.getRoute(method, url);
       }
 
       data = test(routePath, url);

@@ -1,6 +1,6 @@
-import { Rute, Request, Response, Middleware, Next, HTTP } from "../../mod.ts";
+import { Rute, Router, Request, Response, Middleware, Next, HTTP } from "../../mod.ts";
 
-export const routes: Rute = new Rute();
+export const routes: Router = new Router("test");
 
 /**
  * Static file server
