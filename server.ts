@@ -9,7 +9,7 @@ import { test, getCleanPath, RouteData } from "./route_parser.ts";
 
 import { Logger } from "./middlewares/logger.ts";
 
-import { ruteLog } from "./utils/console.ts";
+import { log } from "./utils/console.ts";
 
 export { Router, Request, Response, Middleware, Next, HTTP }
 
@@ -78,7 +78,7 @@ export class Server extends Router {
       ? serveTLS(addr)
       : serve(addr);
 
-    ruteLog("Listening on", addr);
+    log("Listening on", addr);
 
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
