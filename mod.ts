@@ -6,7 +6,7 @@ import { Cookie } from "https://deno.land/std@v0.41.0/http/cookie.ts";
 import * as denoPath from "https://deno.land/std@v0.41.0/path/mod.ts";
 
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
-import { Request, parseHttpRequest, HTTP } from "./request.ts";
+import { Request, createFromDenoRequest, HTTP } from "./request.ts";
 import { Response } from "./response.ts";
 import { MIME } from "./mime_types.ts";
 import { Logger } from "./middlewares/logger.ts";
@@ -72,6 +72,13 @@ export class Rute extends MiddlewareContainer {
     }
   );
 
+  /**
+   * Use middleware or application
+   *
+   * @param  fn   Middleware|Rute Middleware or sub-application
+   * @return void
+   *
+   */
   use(fn: Middleware | Rute): void {
     if (fn instanceof Rute) {
       let appPath = getCleanPath(denoPath.join(this._path, fn.path));
@@ -89,10 +96,22 @@ export class Rute extends MiddlewareContainer {
     super.use(fn);
   }
 
+  /**
+   * Get application name
+   *
+   * @return string Application name
+   *
+   */
   get name(): string {
     return this._name;
   }
 
+  /**
+   * Get application path
+   *
+   * @return string Application path
+   *
+   */
   get path(): string {
     return this._path;
   }
@@ -288,7 +307,6 @@ export class Rute extends MiddlewareContainer {
       let tempRoute: Route | Rute = this._routes[route];
 
       if (tempRoute instanceof Rute && url.indexOf((<Rute>tempRoute).path) === 0) {
-        // console.log(url, (<Rute>tempRoute).path, url.indexOf((<Rute>tempRoute).path));
         return await (<Rute>tempRoute).getRoute(method, url);
       }
 
@@ -333,7 +351,7 @@ export class Rute extends MiddlewareContainer {
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
       let routeInfo: RouteInfo = await this.getRoute(req.method, path);
-      let httpRequest: Request = await parseHttpRequest(addr, req, routeInfo.data);
+      let httpRequest: Request = await createFromDenoRequest(addr, req, routeInfo.data);
       let httpResponse: Response = new Response();
 
       await this.go(httpRequest, httpResponse, async () => {

@@ -65,7 +65,7 @@ export interface RequestInfo {
   body: ArrayBuffer | ArrayBufferView | undefined;
 }
 
-export async function parseHttpRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
+export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
   const body_raw =  await Deno.readAll(serverRequest.body);
 
   const { protocol, hostname, port } = parseServerInfo(addr);
