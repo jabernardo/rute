@@ -1,4 +1,4 @@
-import { Rute, Router, Request, Response, Middleware, Next, HTTP } from "../../mod.ts";
+import { Router, Request, Response, Next, HTTP } from "../../mod.ts";
 
 export const routes: Router = new Router("test");
 

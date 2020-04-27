@@ -1,4 +1,4 @@
-import { serve, serveTLS, Server, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
+import { serve, serveTLS, Server as HTTPServer, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
 
 import { RouteInfo, Router } from "./router.ts";
 import { Route } from "./route.ts";
@@ -11,13 +11,13 @@ import { Logger } from "./middlewares/logger.ts";
 
 import { ruteLog } from "./utils/console.ts";
 
-export { Router, Request, Response, Middleware, Next }
+export { Router, Request, Response, Middleware, Next, HTTP }
 
 /**
- * Rute class application
+ * Server class application
  *
  */
-export class Rute extends Router {
+export class Server extends Router {
   private _name: string;
 
   constructor(name: string = "rute_app_1", path: string = "/") {
@@ -31,11 +31,11 @@ export class Rute extends Router {
   /**
    * Use middleware or application
    *
-   * @param  fn   Middleware|Rute Middleware or sub-application
+   * @param  fn   Middleware|Server Middleware or sub-application
    * @return void
    *
    */
-  use(fn: Middleware | Router | Rute): void {
+  use(fn: Middleware | Router | Server): void {
     super.use(fn);
   }
 
@@ -66,7 +66,7 @@ export class Rute extends Router {
    * see: https://deno.land/std/http/
    * 
    * @example
-   *    const app = new Rute();
+   *    const app = new Server();
    *    app.listen("80")
    *
    * @param   addr  string | HTTPOptions | HTTPSOptions
@@ -74,7 +74,7 @@ export class Rute extends Router {
    *
    */
   async listen(addr: string | HTTPOptions | HTTPSOptions): Promise<void> {
-    const s: Server = (typeof addr !== "string" && "certFile" in addr) 
+    const s: HTTPServer = (typeof addr !== "string" && "certFile" in addr) 
       ? serveTLS(addr)
       : serve(addr);
 

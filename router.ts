@@ -12,16 +12,16 @@ import { MIME } from "./mime_types.ts";
 
 import { defaultPage } from "./utils/page.ts";
 
-import { Rute} from "./server.ts";
+import { Server} from "./server.ts";
 
-export interface Rutes {
-  [path: string]: Rute
+export interface Servers {
+  [path: string]: Server
 }
 
 export interface RouteInfo {
   path: string,
   data: RouteData,
-  route: Route | Router | Rute
+  route: Route | Router | Server
 }
 
 export interface Routers {
@@ -30,7 +30,7 @@ export interface Routers {
 
 export class Router extends MiddlewareContainer {
   private _path: string;
-  private _routes: Routes | Routers | Rutes = {};
+  private _routes: Routes | Routers | Servers = {};
   private _staticPaths: string[] = [];
 
   constructor(path: string = "/") {
@@ -46,12 +46,12 @@ export class Router extends MiddlewareContainer {
   /**
    * Use middleware or application
    *
-   * @param  fn   Middleware|Rute Middleware or sub-application
+   * @param  fn   Middleware|Server Middleware or sub-application
    * @return void
    *
    */
-  use(fn: Middleware | Router | Rute): void {
-    if (fn instanceof Rute || fn instanceof Router) {
+  use(fn: Middleware | Router | Server): void {
+    if (fn instanceof Server || fn instanceof Router) {
       let appPath = getCleanPath(denoPath.join(this._path, fn.path));
       let appKey = `\\${appPath}`;
 
@@ -256,7 +256,7 @@ export class Router extends MiddlewareContainer {
    *
    * @example
    *
-   *   const app = new Rute();
+   *   const app = new Server();
    *   app.static("./static");
    *
    * @param   path   string   Folder path
@@ -282,9 +282,9 @@ export class Router extends MiddlewareContainer {
     for (let route in this._routes) {
       let [ routeMethod, routePath ] = route.split("\\");
 
-      let tempRoute: Route | Router | Rute = this._routes[route];
+      let tempRoute: Route | Router | Server = this._routes[route];
 
-      if ((tempRoute instanceof Rute || tempRoute instanceof Router) && url.indexOf((<Rute>tempRoute).path) === 0) {
+      if ((tempRoute instanceof Server || tempRoute instanceof Router) && url.indexOf((<Server>tempRoute).path) === 0) {
         return await tempRoute.getRoute(method, url);
       }
 
