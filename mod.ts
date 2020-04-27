@@ -31,13 +31,15 @@ export interface RouteInfo {
  *
  */
 export class Rute extends MiddlewareContainer {
-  private _path: string = "/";
+  private _name: string;
+  private _path: string;
   private _routes: Routes | Apps = {};
   private _staticPaths: string[] = [];
 
-  constructor(path: string = "/") {
+  constructor(name: string = "rute_app_1", path: string = "/") {
     super();
 
+    this._name = name;
     this._path = getCleanPath(path);
 
     this.use(Logger);
@@ -72,11 +74,23 @@ export class Rute extends MiddlewareContainer {
 
   use(fn: Middleware | Rute): void {
     if (fn instanceof Rute) {
-      this.route("", fn.path, fn);
+      let appPath = getCleanPath(denoPath.join(this._path, fn.path));
+      let appKey = `\\${appPath}`;
+
+      if (typeof this._routes[appKey] !== "undefined") {
+        throw new Error(`Can't use "${fn.name}" on "${appPath}" because route already exists.`);
+      }
+
+      this._routes[appKey] = fn;
+
       return;
     }
 
     super.use(fn);
+  }
+
+  get name(): string {
+    return this._name;
   }
 
   get path(): string {
@@ -93,15 +107,13 @@ export class Rute extends MiddlewareContainer {
    * @return  void
    *
    */
-  route(method: string, path: string, handler: RouteHandler | Rute, ...middlewares: Middleware[]): void {
+  route(method: string, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = getCleanPath(denoPath.join(this._path, path));
     let routeKey = `${method}\\${routePath}`;
 
-    let route: Route | Rute = handler instanceof Rute
-      ? handler
-      : new Route(path, method, handler);
+    let route = new Route(path, method, handler);
 
-    if (typeof this._routes[routeKey] !== "undefined"){
+    if (typeof this._routes[routeKey] !== "undefined") {
       throw new Error(`${routePath} already exists.`);
     }
 
