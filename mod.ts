@@ -16,7 +16,7 @@ import { ruteLog } from "./utils/console.ts";
 
 export { Request, Response, Middleware, Next, Cookie, HTTP };
 
-export interface Apps {
+export interface Rutes {
   [path: string]: Rute
 }
 
@@ -33,7 +33,7 @@ export interface RouteInfo {
 export class Rute extends MiddlewareContainer {
   private _name: string;
   private _path: string;
-  private _routes: Routes | Apps = {};
+  private _routes: Routes | Rutes = {};
   private _staticPaths: string[] = [];
 
   constructor(name: string = "rute_app_1", path: string = "/") {
