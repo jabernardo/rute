@@ -33,6 +33,13 @@ export interface serverInfo {
   keyFile?: string
 }
 
+/**
+ * Parse Server Information ( string | HTTPOptions | HTTPSOptions -> serverInfo )
+ *
+ * @param   addr   string | HTTPOptions | HTTPSOptions   HTTP/HTTPS Information
+ * @return  serverInfo
+ *
+ */
 export function parseServerInfo(addr: string | HTTPOptions | HTTPSOptions): serverInfo {
   let [ hostname, port ] = (typeof addr === "string") 
     ? addr.split(":")
@@ -65,6 +72,13 @@ export interface RequestInfo {
   body: ArrayBuffer | ArrayBufferView | undefined;
 }
 
+/**
+ * Create a new Request object based from Deno Request
+ *
+ * @param   addr   string | HTTPOptions | HTTPSOptions   HTTP/HTTPS Information
+ * @return  Promise<Request> HTTP Request Object
+ *
+ */
 export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
   const body_raw =  await Deno.readAll(serverRequest.body);
 
@@ -94,7 +108,21 @@ export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOp
   });
 }
 
+/**
+ * Request Parser
+ *  collection of supported request data formats
+ * - URL Search Query
+ * - FormData (URL Encoded)
+ *
+ */
 export class RequestParser {
+  /**
+   * URL Search Query
+   *
+   * @param   data string Query String
+   * @return  RequestData
+   *
+   */
   urlSearchQuery(data: string): RequestData {
     let params: RequestData = {};
     data = data[0] == "?" ? data.substr(1, data.length) : data;
@@ -108,6 +136,13 @@ export class RequestParser {
     return params;
   }
 
+  /**
+   * FormData (URL Encoded)
+   *
+   * @param   data string Query String
+   * @return  RequestData
+   *
+   */
   formDataUrlEncoded(data: string): RequestData {
     let params: RequestData = {};
 
@@ -121,10 +156,20 @@ export class RequestParser {
   }
 }
 
+/**
+ * Rute HTTP Request Object
+ *
+ */
 export class Request {
   private _requestData: RequestInfo;
   private _parsedBody: RequestData;
 
+  /**
+   * New HTTP Request
+   *
+   * @param   requestData   RequestInfo based from Deno HTTP Request
+   *
+   */
   constructor(requestData: RequestInfo) {
     let parser: RequestParser = new RequestParser();
     let textDecoder: TextDecoder = new TextDecoder()
@@ -141,7 +186,15 @@ export class Request {
     }
   }
 
-  params(key: string = "", fallback: any = null):any {
+  /**
+   * URL Route Parameters
+   *
+   * @param   key       string    URL Pattern Key (default = "")
+   * @param   fallback  any       Fallback value
+   * @return  any
+   *
+   */
+  params(key: string = "", fallback: any = null): any {
     if (key) {
       return this._requestData.params[key] || fallback;
     }
@@ -149,7 +202,15 @@ export class Request {
     return this._requestData.params;
   }
 
-  query(key: string = "", fallback: any = null):any {
+  /**
+   * URL Search Query
+   *
+   * @param   key       string    URL Pattern Key (default = "")
+   * @param   fallback  any       Fallback value
+   * @return  any
+   *
+   */
+  query(key: string = "", fallback: any = null): any {
     if (key) {
       return this._requestData.query[key] || fallback;
     }
@@ -157,22 +218,53 @@ export class Request {
     return this._requestData.query;
   }
 
+  /**
+   * Get request connection
+   *
+   * @return   Conn   Deno.Connection
+   *
+   */
   get connection() {
     return this._requestData.conn;
   }
 
+  /**
+   * Get request protocol
+   *
+   * @return string Request Protocol
+   *
+   */
   get protocol() {
     return this._requestData.protocol;
   }
 
+  /**
+   * Get request url
+   *
+   * @return string Request URL
+   *
+   */
   get url(): URL {
     return this._requestData.url;
   }
 
+  /**
+   * Get request method
+   *
+   * @return string Request method
+   *
+   */
   get method(): string {
     return this._requestData.method;
   }
 
+  /**
+   * Check if content-type is
+   *
+   * @param  contentType string MIME Type
+   * @return boolean
+   *
+   */
   is(contentType: string): boolean {
     let contentTypeTest: RegExp = new RegExp(`^.*/${ contentType.toLowerCase() }`);
     let header: string = this.header("content-type", "");
@@ -180,22 +272,53 @@ export class Request {
     return contentTypeTest.test(header);
   }
 
+  /**
+   * Get request header
+   *
+   * @return string Request header
+   *
+   */
   header(key: string, fallback: any = null): string {
     return this._requestData.headers.get(key) || fallback;
   }
 
+  /**
+   * Get request cookie
+   *
+   * @return string Request cookie
+   *
+   */
   cookie(key: string, fallback: any = null): string {
     return this._requestData.cookies[key] || fallback;
   }
 
+  /**
+   * Get request body
+   *
+   * @return ArrayBuffer | ArrayBufferView | undefined Request body
+   *
+   */
   body(): ArrayBuffer | ArrayBufferView | undefined {
     return this._requestData.body;
   }
 
+  /**
+   * Get value from parsed request body
+   *
+   * @param name   string   Request name
+   * @return any | null
+   *
+   */
   get(name: string): any | null {
     return this._parsedBody[name] || null;
   }
 
+  /**
+   * Get all parsed request body data
+   *
+   * @return RequestData
+   *
+   */
   getAll(): RequestData {
     return this._parsedBody;
   }
