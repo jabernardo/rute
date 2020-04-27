@@ -3,12 +3,6 @@ import { Rute, Router, Request, Response, Middleware, Next, HTTP } from "../../m
 export const routes: Router = new Router("test");
 
 /**
- * Static file server
- *   http://localhost:8000/public/style.css
- */
-routes.static("./public");
-
-/**
  * Middleware example
  */
 routes.use(async (req: Request, res: Response, n: Next) => {

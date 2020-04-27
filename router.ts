@@ -1,14 +1,22 @@
+import { ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
+
 import * as denoPath from "https://deno.land/std@v0.41.0/path/mod.ts";
 import { exists, existsSync } from "https://deno.land/std@v0.41.0/fs/mod.ts";
 
-import { Route, Routes, RouteHandler } from "./route.ts";
+import { Request, HTTP } from "./request.ts";
+import { Response } from "./response.ts";
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
-import { Request, createFromDenoRequest, HTTP } from "./request.ts";
-import { Response } from "./response.ts";
-import { defaultPage } from "./utils/page.ts";
+import { Route, Routes, RouteHandler } from "./route.ts";
 import { MIME } from "./mime_types.ts";
-import { Rutes, Rute } from "./mod.ts";
+
+import { defaultPage } from "./utils/page.ts";
+
+import { Rute} from "./server.ts";
+
+export interface Rutes {
+  [path: string]: Rute
+}
 
 export interface RouteInfo {
   path: string,
