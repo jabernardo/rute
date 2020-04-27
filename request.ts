@@ -250,7 +250,7 @@ export class Request {
    *
    */
   get cookies(): Cookies {
-    this._requestData.cookies;
+    return this._requestData.cookies;
   }
 
   /**

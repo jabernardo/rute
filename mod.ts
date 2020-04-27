@@ -358,7 +358,7 @@ export class Rute extends MiddlewareContainer {
         await (<Route>routeInfo.route).execute(httpRequest, httpResponse);
       });
 
-      req.respond(httpResponse.compile());
+      req.respond(httpResponse.deno);
     }
   }
 }
