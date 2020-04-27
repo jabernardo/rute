@@ -1,6 +1,8 @@
 import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
 import { Cookies, getCookies } from "https://deno.land/std@v0.41.0/http/cookie.ts";
+
 import { RouteData } from "./route_parser.ts";
+import { RequestData, urlSearchQuery } from "./request_data.ts";
 
 import Conn = Deno.Conn
 
@@ -21,26 +23,22 @@ export const HTTP: HTTPMethods = {
   PATCH: "PATCH"
 }
 
-export interface RequestData {
-  [key: string]: string;
-}
-
-export interface serverInfo {
-  protocol: string,
-  hostname: string,
-  port: string | number,
-  certFile?: string,
-  keyFile?: string
+export interface ServerInfo {
+  protocol: string;
+  hostname: string;
+  port: string | number;
+  certFile?: string;
+  keyFile?: string;
 }
 
 /**
- * Parse Server Information ( string | HTTPOptions | HTTPSOptions -> serverInfo )
+ * Parse Server Information ( string | HTTPOptions | HTTPSOptions -> ServerInfo )
  *
  * @param   addr   string | HTTPOptions | HTTPSOptions   HTTP/HTTPS Information
- * @return  serverInfo
+ * @return  ServerInfo
  *
  */
-export function parseServerInfo(addr: string | HTTPOptions | HTTPSOptions): serverInfo {
+export function parseServerInfo(addr: string | HTTPOptions | HTTPSOptions): ServerInfo {
   let [ hostname, port ] = (typeof addr === "string") 
     ? addr.split(":")
     : [ "hostname" in addr ? addr["hostname"] : "localhost", addr.port ];
@@ -80,8 +78,6 @@ export interface RequestInfo {
  *
  */
 export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
-  const body_raw =  await Deno.readAll(serverRequest.body);
-
   const { protocol, hostname, port } = parseServerInfo(addr);
   
   // TODO: Currently deno doesn't support auth with ServerRequest
@@ -98,9 +94,9 @@ export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOp
     protocol: serverRequest.proto,
     headers: serverRequest.headers,
     cookies: getCookies(serverRequest),
-    body: body_raw,
+    body: await Deno.readAll(serverRequest.body),
     params: params,
-    query: new RequestParser().urlSearchQuery(hostUrl.search)
+    query: urlSearchQuery(hostUrl.search)
   }
 
   return new Promise(resolve => {
@@ -109,60 +105,11 @@ export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOp
 }
 
 /**
- * Request Parser
- *  collection of supported request data formats
- * - URL Search Query
- * - FormData (URL Encoded)
- *
- */
-export class RequestParser {
-  /**
-   * URL Search Query
-   *
-   * @param   data string Query String
-   * @return  RequestData
-   *
-   */
-  urlSearchQuery(data: string): RequestData {
-    let params: RequestData = {};
-    data = data[0] == "?" ? data.substr(1, data.length) : data;
-
-    data.split("&").forEach(param => {
-      let [ key, val ] = param.split("=");
-
-      params[key] = val;
-    });
-
-    return params;
-  }
-
-  /**
-   * FormData (URL Encoded)
-   *
-   * @param   data string Query String
-   * @return  RequestData
-   *
-   */
-  formDataUrlEncoded(data: string): RequestData {
-    let params: RequestData = {};
-
-    data.split("&").forEach(param => {
-      let [ key, val ] = param.split("=");
-
-      params[key] = val;
-    });
-
-    return params;
-  }
-}
-
-/**
  * Rute HTTP Request Object
  *
  */
 export class Request {
   private _requestData: RequestInfo;
-  private _parsedBody: RequestData;
 
   /**
    * New HTTP Request
@@ -171,19 +118,7 @@ export class Request {
    *
    */
   constructor(requestData: RequestInfo) {
-    let parser: RequestParser = new RequestParser();
-    let textDecoder: TextDecoder = new TextDecoder()
-
     this._requestData = requestData;
-    this._parsedBody = JSON.parse("{}");
-
-    try {
-      this._parsedBody = JSON.parse(textDecoder.decode(this._requestData.body));
-    } catch {
-       if (this.is("x-www-form-urlencoded")) {
-         this._parsedBody = parser.formDataUrlEncoded(textDecoder.decode(requestData.body));
-       }
-    }
   }
 
   /**
@@ -194,11 +129,11 @@ export class Request {
    * @return  any
    *
    */
-  params(key: string = "", fallback: any = null): any {
-    if (key) {
-      return this._requestData.params[key] || fallback;
-    }
+  param(key: string = "", fallback: any = null): any {
+    return this._requestData.params[key] || fallback;
+  }
 
+  get params(): RouteData {
     return this._requestData.params;
   }
 
@@ -210,11 +145,17 @@ export class Request {
    * @return  any
    *
    */
-  query(key: string = "", fallback: any = null): any {
-    if (key) {
-      return this._requestData.query[key] || fallback;
-    }
+  query(key: string, fallback: any = null): any {
+    return this._requestData.query[key] || fallback;
+  }
 
+  /**
+   * URL Search Queries
+   * 
+   * @return RequestData
+   *
+   */
+  get queries(): RequestData {
     return this._requestData.query;
   }
 
@@ -283,6 +224,16 @@ export class Request {
   }
 
   /**
+   * Request Headers
+   *
+   * @return  Headers
+   *
+   */
+  get headers(): Headers {
+    return this._requestData.headers;
+  }
+
+  /**
    * Get request cookie
    *
    * @return string Request cookie
@@ -293,33 +244,22 @@ export class Request {
   }
 
   /**
+   * Get request cookies
+   *
+   * @return Cookies
+   *
+   */
+  get cookies(): Cookies {
+    this._requestData.cookies;
+  }
+
+  /**
    * Get request body
    *
    * @return ArrayBuffer | ArrayBufferView | undefined Request body
    *
    */
-  body(): ArrayBuffer | ArrayBufferView | undefined {
+  get body(): ArrayBuffer | ArrayBufferView | undefined {
     return this._requestData.body;
-  }
-
-  /**
-   * Get value from parsed request body
-   *
-   * @param name   string   Request name
-   * @return any | null
-   *
-   */
-  get(name: string): any | null {
-    return this._parsedBody[name] || null;
-  }
-
-  /**
-   * Get all parsed request body data
-   *
-   * @return RequestData
-   *
-   */
-  getAll(): RequestData {
-    return this._parsedBody;
   }
 }
