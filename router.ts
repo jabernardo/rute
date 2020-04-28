@@ -39,6 +39,20 @@ export class Router extends MiddlewareContainer {
     this._path = getCleanPath(path);
   }
 
+  /**
+   * Rebase router
+   *
+   * @param  path   string URL Path
+   *
+   * @return Router
+   *
+   */
+  rebase(path: string): Router {
+    this._path = getCleanPath(path);
+
+    return this;
+  }
+
   get path() {
     return this._path;
   }
@@ -105,7 +119,7 @@ export class Router extends MiddlewareContainer {
    *
    */
   route(method: string, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
-    let routePath = getCleanPath(denoPath.join(this._path, path));
+    let routePath = getCleanPath(path);
     let routeKey = `${method}\\${routePath}`;
 
     let route = new Route(path, method, handler);
@@ -280,18 +294,21 @@ export class Router extends MiddlewareContainer {
     let data: RouteData | null = <RouteData>{};
 
     for (let route in this._routes) {
-      let [ routeMethod, routePath ] = route.split("\\");
+      const [ routeMethod, routePath ] = route.split("\\");
+      const joinedPath = getCleanPath(denoPath.join(this._path, routePath));
 
       let tempRoute: Route | Router | Server = this._routes[route];
 
-      if (tempRoute instanceof Server || tempRoute instanceof Router) {
-        let fromAnother: RouteInfo = await tempRoute.getRoute(method, url);
-        if (fromAnother.route.path !== "default") return fromAnother;
+      if ((tempRoute instanceof Server || tempRoute instanceof Router)
+         && url.indexOf(joinedPath) === 0) {
+        let fromAnother: RouteInfo = await tempRoute.rebase(joinedPath).getRoute(method, url);
+
+        return fromAnother;
       }
 
-      data = test(routePath, url);
+      data = test(joinedPath, url);
 
-      if (data != null && (routeMethod.length === 0 || method == routeMethod)) {
+      if (tempRoute instanceof Route && data != null && (routeMethod.length === 0 || method == routeMethod)) {
         routeObj = <Route>tempRoute;
         break;
       }

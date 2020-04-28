@@ -1,4 +1,5 @@
 import { serve, serveTLS, Server as HTTPServer, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
+import * as denoPath from "https://deno.land/std@v0.41.0/path/mod.ts";
 
 import { RouteInfo, Router } from "./router.ts";
 import { Route } from "./route.ts";
@@ -36,9 +37,27 @@ export class Server extends Router {
    *
    */
   use(fn: Middleware | Router | Server): void {
+    if (fn instanceof Router || fn instanceof Server) {
+      fn.rebase(denoPath.join(this.path, fn.path));
+    }
+
     super.use(fn);
 
     log(`[${this.name}] Attached`, (fn instanceof Router || fn instanceof Server) ? fn.path : fn.constructor.name);
+  }
+
+  /**
+   * Rebase router
+   *
+   * @param  path   string URL Path
+   *
+   * @return Server
+   *
+   */
+  rebase(path: string): Server {
+    super.rebase(path);
+
+    return this;
   }
 
   /**
