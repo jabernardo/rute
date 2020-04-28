@@ -284,8 +284,9 @@ export class Router extends MiddlewareContainer {
 
       let tempRoute: Route | Router | Server = this._routes[route];
 
-      if ((tempRoute instanceof Server || tempRoute instanceof Router) && url.indexOf((<Server>tempRoute).path) === 0) {
-        return await tempRoute.getRoute(method, url);
+      if (tempRoute instanceof Server || tempRoute instanceof Router) {
+        let fromAnother: RouteInfo = await tempRoute.getRoute(method, url);
+        if (fromAnother.route.path !== "default") return fromAnother;
       }
 
       data = test(routePath, url);

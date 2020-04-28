@@ -37,6 +37,8 @@ export class Server extends Router {
    */
   use(fn: Middleware | Router | Server): void {
     super.use(fn);
+
+    log(`[${this.name}] Attached`, (fn instanceof Router || fn instanceof Server) ? fn.path : fn.constructor.name);
   }
 
   /**
@@ -78,7 +80,7 @@ export class Server extends Router {
       ? serveTLS(addr)
       : serve(addr);
 
-    log("Listening on", addr);
+    log(`[${this.name}] Listening on`, addr);
 
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
