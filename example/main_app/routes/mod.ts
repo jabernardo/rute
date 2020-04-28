@@ -4,4 +4,4 @@ import { Home } from "./home.ts";
 
 export const routes: Router = new Router();
 
-routes.all("/", Home.index);
+routes.all("/", Home.index.bind(Home));
