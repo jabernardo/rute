@@ -2,8 +2,6 @@ import { Server, Request, Response, Middleware, Next, HTTP } from "../../mod.ts"
 
 import { routes } from "./routes/mod.ts";
 
-const app: Server = new Server();
+export const app: Server = new Server("main_app");
 
 app.use(routes);
-
-app.listen({ port: 8000 });
