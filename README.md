@@ -1,5 +1,5 @@
 <p align="center">
-<image src="https://raw.githubusercontent.com/jabernardo/rute/master/assets/rute.png" width="40%" height="40%" />
+<image src="https://raw.githubusercontent.com/jabernardo/rute/0.x/assets/rute.png" width="40%" height="40%" />
 </p>
 
 # Rute 
