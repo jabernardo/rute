@@ -66,6 +66,26 @@ app.all("/", async (req: Request, res: Response) => {
 
 ```
 
+## Want to combine your apps?
+
+```ts
+import { app as secondApp } from "../second_app/app.ts";
+
+/**
+ * Root application
+ *
+ * path: /
+ */
+const app: Server = new Server("multi_app");
+
+/**
+ * Second application
+ *
+ * path: /second
+ */
+app.use(secondApp.rebase("second"));
+```
+
 ## Contibuting to Rute!
 To contribute to Rute! Make sure to give a star and forked this repository.
 
