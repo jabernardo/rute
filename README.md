@@ -29,7 +29,7 @@ import { Rute, Request, Response, Middleware, Next } from "https://raw.githubuse
 
 ```sh
 
-deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/0.x/example/app.ts
+deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/0.x/example/basic/app.ts
 
 ```
 
@@ -37,9 +37,9 @@ deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/r
 
 ```ts
 
-import { Rute, Request, Response } from "https://raw.githubusercontent.com/jabernardo/rute/0.x/mod.ts";
+import { Server, Request, Response } from "https://raw.githubusercontent.com/jabernardo/rute/0.x/mod.ts";
 
-const app: Rute = new Rute();
+const app: Server = new Server();
 
 app.get("/", (req: Request, res: Response) => {
   res.set({"message": "Hello World!"});
