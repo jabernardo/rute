@@ -15,13 +15,13 @@ A Simple Router for Deno
 ## Versions
 
 - `0.1` - Deprecated version
-- `0.x` - Alpha
+- `0.x` - Development branch for version 0
 
 ## Installation
 
 ```ts
 
-import { Rute, Request, Response, Middleware, Next } from "https://raw.githubusercontent.com/jabernardo/rute/0.x/mod.ts";
+import { Server, Request, Response, Middleware, Next } from "https://raw.githubusercontent.com/jabernardo/rute/0.x/mod.ts";
 
 ```
 
