@@ -14,7 +14,7 @@ A Simple Router for Deno
 
 ## Versions
 
-- `master` - Latest version
+- `0.1` - Deprecated version
 - `0.x` - Alpha
 
 ## Installation
