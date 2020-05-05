@@ -1,19 +1,23 @@
 import { Request } from "../request.ts";
+import { Response } from "../response.ts";
+import "https://raw.githubusercontent.com/jabernardo/strcolors.ts/master/mod.ts";
 
 export function log(message: string, ...args: any[]) {
-  console.log(`[${Date.now()}] ${message}`, ...args);
+  console.log(`[${Date.now().toString().yellow()}]`, message.white(), ...args);
 }
 
-export function logConnection(req: Request) {
+export function logConnection(req: Request, res: Response) {
   const { remoteAddr, localAddr} = req.connection;
 
-  const localPort = "port"  in localAddr ? localAddr.port : "";
-  const localTransport = "transport" in localAddr ? localAddr.transport : "";
+  const localPort = "port"  in localAddr ? localAddr.port.toString() : "";
+  const localTransport = "transport" in localAddr ? localAddr.transport.toString() : "";
   const localHostName = "hostname" in localAddr ? localAddr.hostname : "";
 
-  const remoteHostName = "hostname" in remoteAddr ? remoteAddr.hostname : "";
-  const remotePort = "port"  in remoteAddr ? remoteAddr.port : "";
-  const remoteTransport = "transport" in remoteAddr ? remoteAddr.transport : "";
+  const remoteHostName = "hostname" in remoteAddr ? remoteAddr.hostname.toString() : "";
+  const remotePort = "port"  in remoteAddr ? remoteAddr.port.toString() : "";
+  const remoteTransport = "transport" in remoteAddr ? remoteAddr.transport.toString() : "";
 
-  log(`@ ${localHostName}:${localPort}/${localTransport} ( from ${remoteHostName}:${remotePort}/${remoteTransport} - ${req.method} - ${req.url.href} )`);
+  const responseCode = res.code < 500 ? res.code.toString().green() : res.code.toString().red();
+
+  log(`@ ${localHostName.blue()}:${localPort.green()}/${localTransport.green()} ( from ${remoteHostName.blue()}:${remotePort.green()}/${remoteTransport.green()} - ${req.method.cyan()} - ${responseCode} - ${req.url.href.magenta()} )`);
 }

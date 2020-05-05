@@ -43,7 +43,7 @@ export class Server extends Router {
 
     super.use(fn);
 
-    log(`[${this.name}] Attached`, (fn instanceof Router || fn instanceof Server) ? fn.path : fn.constructor.name);
+    log(`[${this.name}]`.bgBlue().white(), "Attached".green(), (fn instanceof Router || fn instanceof Server) ? fn.path : fn.constructor.name);
   }
 
   /**
@@ -99,7 +99,7 @@ export class Server extends Router {
       ? serveTLS(addr)
       : serve(addr);
 
-    log(`[${this.name}] Listening on`, addr);
+    log(`[${this.name}]`.bgGreen().white(), `Listening on`.green(), addr);
 
     for await (const req of s) {
       let path: string = getCleanPath(req.url);

@@ -1,3 +1,5 @@
+import "https://raw.githubusercontent.com/jabernardo/strcolors.ts/master/mod.ts";
+
 import { Middleware, Next } from "../middleware.ts";
 import { Request } from "../request.ts";
 import { Response } from "../response.ts";
@@ -6,9 +8,10 @@ import { log, logConnection } from "../utils/console.ts";
 
 export const Logger: Middleware = async (req: Request, res: Response, n: Next) => {
   try {
-    logConnection(req);
     await n();
+    logConnection(req, res);
   } catch (err) {
-    log("Caught an", err);
+    logConnection(req, res.status(500));
+    log("Caught an".bgRed().white(), err);
   }
 }
