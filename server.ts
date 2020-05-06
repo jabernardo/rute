@@ -81,6 +81,29 @@ export class Server extends Router {
   }
 
   /**
+   * Get host URL string
+   *
+   * @param   addr  string | HTTPOptions | HTTPSOptions
+   *
+   * @return  string
+   *
+   */
+  private _getConnectionString(addr: string | HTTPOptions | HTTPSOptions): string {
+    if (typeof addr === "string") return addr;
+
+    const hostname =
+      (typeof addr === "object" && "hostname" in addr) ? (<HTTPOptions>addr).hostname : "localhost";
+
+    const port =
+      (typeof addr === "object" && "port" in addr) ? (<HTTPOptions>addr).port : "";
+
+    const protocol =
+      (typeof addr === "object" && "certFile" in addr) ? "https" : "http";
+
+    return `${protocol}://${hostname}:${port}/`;
+  }
+
+  /**
    * Serve and listen
    *
    * To enable TLS and another options
@@ -99,7 +122,7 @@ export class Server extends Router {
       ? serveTLS(addr)
       : serve(addr);
 
-    log(`[${this.name}]`.bgGreen().white(), `Listening on`.green(), addr);
+    log(`[${this.name}]`.bgGreen().white(), `Listening on`.green(), this._getConnectionString(addr));
 
     for await (const req of s) {
       let path: string = getCleanPath(req.url);
