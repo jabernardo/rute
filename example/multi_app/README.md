@@ -1,7 +1,7 @@
 # Running this example
 
 ```sh
-deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/0.x/example/multi_app/app.ts
+deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/0.8/example/multi_app/app.ts
 ```
 
 ### Multi App
