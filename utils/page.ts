@@ -30,7 +30,7 @@ export function defaultPage(title: string, message: string) {
 
     .container::before {
       content: "";
-      background: url('https://raw.githubusercontent.com/jabernardo/rute/master/assets/rute.png') no-repeat center top;
+      background: url('https://raw.githubusercontent.com/jabernardo/rute/0.x/assets/rute.png') no-repeat center top;
       opacity: 0.2;
       top: 0;
       left: 0;

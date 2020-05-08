@@ -1,5 +1,5 @@
-import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v0.41.0/http/server.ts";
-import { Cookies, getCookies } from "https://deno.land/std@v0.41.0/http/cookie.ts";
+import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v1.0.0-rc1/http/server.ts";
+import { Cookies, getCookies } from "https://deno.land/std@v1.0.0-rc1/http/cookie.ts";
 
 import { RouteData } from "./route_parser.ts";
 import { RequestData, urlSearchQuery } from "./request_data.ts";
