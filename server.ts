@@ -6,7 +6,7 @@ import { Route } from "./route.ts";
 import { Middleware, Next } from "./middleware.ts";
 import { Request, createFromDenoRequest, HTTP } from "./request.ts";
 import { Response } from "./response.ts";
-import { test, getCleanPath, RouteData } from "./route_parser.ts";
+import { getCleanPath } from "./route_parser.ts";
 
 import { Logger } from "./middlewares/logger.ts";
 

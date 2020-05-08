@@ -1,4 +1,3 @@
-import { RouteData } from "./route_parser.ts";
 import { Request } from "./request.ts";
 import { Response } from "./response.ts";
 import { MiddlewareContainer, Middleware, Next } from "./middleware.ts";
