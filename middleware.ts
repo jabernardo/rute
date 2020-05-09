@@ -11,7 +11,7 @@ export class MiddlewareContainer {
    * @param   {Middleware}  fn  - Middleware function
    * @return  {void}        void
    */
-  use(fn: Middleware) {
+  use(fn: Middleware): void {
     this.go = ((stack: Middleware) => async (request: Request, response: Response, next: Next) => await stack(request, response, fn.bind(this, request, response, next.bind(this))))(this.go);
   }
 
