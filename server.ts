@@ -32,8 +32,8 @@ export class Server extends Router {
   /**
    * Use middleware or application
    *
-   * @param  fn   Middleware|Server Middleware or sub-application
-   * @return void
+   * @param  {Middleware|Server}  fn  - Middleware or sub-application
+   * @return {void} void
    *
    */
   use(fn: Middleware | Router | Server): void {
@@ -49,9 +49,9 @@ export class Server extends Router {
   /**
    * Rebase router
    *
-   * @param  path   string URL Path
+   * @param {string}  path  - URL Path
    *
-   * @return Server
+   * @return {Server} Server Instance
    *
    */
   rebase(path: string): Server {
@@ -63,7 +63,7 @@ export class Server extends Router {
   /**
    * Get application name
    *
-   * @return string Application name
+   * @return  {string}  - Application name
    *
    */
   get name(): string {
@@ -73,7 +73,7 @@ export class Server extends Router {
   /**
    * Get application path
    *
-   * @return string Application path
+   * @return  {string}  - Application path
    *
    */
   get path(): string {
@@ -83,9 +83,9 @@ export class Server extends Router {
   /**
    * Get host URL string
    *
-   * @param   addr  string | HTTPOptions | HTTPSOptions
+   * @param {string | HTTPOptions | HTTPSOptions} addr - Connection information
    *
-   * @return  string
+   * @return {string}   Human readable connection string
    *
    */
   private _getConnectionString(addr: string | HTTPOptions | HTTPSOptions): string {
@@ -108,17 +108,17 @@ export class Server extends Router {
    *
    * To enable TLS and another options
    * see: https://deno.land/std/http/
-   * 
+   *
    * @example
    *    const app = new Server();
    *    app.listen("80")
    *
-   * @param   addr  string | HTTPOptions | HTTPSOptions
-   * @return  Promise<void>
+   * @param   {string | HTTPOptions | HTTPSOptions} addr  - Connection Information
+   * @return  {Promise<void>}
    *
    */
   async listen(addr: string | HTTPOptions | HTTPSOptions): Promise<void> {
-    const s: HTTPServer = (typeof addr !== "string" && "certFile" in addr) 
+    const s: HTTPServer = (typeof addr !== "string" && "certFile" in addr)
       ? serveTLS(addr)
       : serve(addr);
 

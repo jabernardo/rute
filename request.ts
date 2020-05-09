@@ -34,12 +34,12 @@ export interface ServerInfo {
 /**
  * Parse Server Information ( string | HTTPOptions | HTTPSOptions -> ServerInfo )
  *
- * @param   addr   string | HTTPOptions | HTTPSOptions   HTTP/HTTPS Information
- * @return  ServerInfo
+ * @param   {string | HTTPOptions | HTTPSOptions} addr  - HTTP/HTTPS Information
+ * @return  {ServerInfo}  Server Information
  *
  */
 export function parseServerInfo(addr: string | HTTPOptions | HTTPSOptions): ServerInfo {
-  let [ hostname, port ] = (typeof addr === "string") 
+  let [ hostname, port ] = (typeof addr === "string")
     ? addr.split(":")
     : [ "hostname" in addr ? addr["hostname"] : "localhost", addr.port ];
 
@@ -73,13 +73,13 @@ export interface RequestInfo {
 /**
  * Create a new Request object based from Deno Request
  *
- * @param   addr   string | HTTPOptions | HTTPSOptions   HTTP/HTTPS Information
- * @return  Promise<Request> HTTP Request Object
+ * @param   {string | HTTPOptions | HTTPSOptions} addr  - HTTP/HTTPS Information
+ * @return  {Promise<Request>} HTTP Request Object
  *
  */
 export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
   const { protocol, hostname, port } = parseServerInfo(addr);
-  
+
   // TODO: Currently deno doesn't support auth with ServerRequest
   const hostUrlString = `${protocol}${hostname}${ port == "443" || port == "80" ? "" : ":" + port }${serverRequest.url}`;
   const hostUrl = new URL(hostUrlString);
@@ -114,7 +114,7 @@ export class Request {
   /**
    * New HTTP Request
    *
-   * @param   requestData   RequestInfo based from Deno HTTP Request
+   * @param   {RequestInfo} requestData - RequestInfo based from Deno HTTP Request
    *
    */
   constructor(requestData: RequestInfo) {
@@ -124,15 +124,21 @@ export class Request {
   /**
    * URL Route Parameters
    *
-   * @param   key       string    URL Pattern Key (default = "")
-   * @param   fallback  any       Fallback value
-   * @return  any
+   * @param   {string}  key       - URL Pattern Key (default = "")
+   * @param   {any}     fallback  - Fallback value
+   * @return  {any}     Param value
    *
    */
   param(key: string = "", fallback: any = null): any {
     return this._requestData.params[key] || fallback;
   }
 
+  /**
+   * Get params
+   *
+   * @return {RouteData}  RouteData
+   *
+   */
   get params(): RouteData {
     return this._requestData.params;
   }
@@ -140,9 +146,9 @@ export class Request {
   /**
    * URL Search Query
    *
-   * @param   key       string    URL Pattern Key (default = "")
-   * @param   fallback  any       Fallback value
-   * @return  any
+   * @param   {string}  key       - URL Pattern Key (default = "")
+   * @param   {any}     fallback  - Fallback value
+   * @return  {any}     Query search value
    *
    */
   query(key: string, fallback: any = null): any {
@@ -151,8 +157,8 @@ export class Request {
 
   /**
    * URL Search Queries
-   * 
-   * @return RequestData
+   *
+   * @return {RequestData}  RequestData
    *
    */
   get queries(): RequestData {
@@ -162,7 +168,7 @@ export class Request {
   /**
    * Get request connection
    *
-   * @return   Conn   Deno.Connection
+   * @return   {Conn}   Deno.Connection
    *
    */
   get connection() {
@@ -172,7 +178,7 @@ export class Request {
   /**
    * Get request protocol
    *
-   * @return string Request Protocol
+   * @return {string} Request Protocol
    *
    */
   get protocol() {
@@ -182,7 +188,7 @@ export class Request {
   /**
    * Get request url
    *
-   * @return string Request URL
+   * @return {string} Request URL
    *
    */
   get url(): URL {
@@ -192,7 +198,7 @@ export class Request {
   /**
    * Get request method
    *
-   * @return string Request method
+   * @return {string} Request method
    *
    */
   get method(): string {
@@ -202,21 +208,23 @@ export class Request {
   /**
    * Check if content-type is
    *
-   * @param  contentType string MIME Type
-   * @return boolean
+   * @param  {string}   contentType - MIME Type
+   * @return {boolean}  boolean
    *
    */
   is(contentType: string): boolean {
     let contentTypeTest: RegExp = new RegExp(`^.*/${ contentType.toLowerCase() }`);
     let header: string = this.header("content-type", "");
-    
+
     return contentTypeTest.test(header);
   }
 
   /**
    * Get request header
    *
-   * @return string Request header
+   * @param   {string}  key       - Header name
+   * @param   {any}     fallback  - Fallback data (default: null)
+   * @return  {string} Request header
    *
    */
   header(key: string, fallback: any = null): string {
@@ -226,7 +234,7 @@ export class Request {
   /**
    * Request Headers
    *
-   * @return  Headers
+   * @return  {Headers} Request Headers
    *
    */
   get headers(): Headers {
@@ -236,7 +244,9 @@ export class Request {
   /**
    * Get request cookie
    *
-   * @return string Request cookie
+   * @param   {string}  key       - Cookie name
+   * @param   {any}     fallback  - Fallback data (default: null)
+   * @return  {string} Request cookie
    *
    */
   cookie(key: string, fallback: any = null): string {
@@ -246,7 +256,7 @@ export class Request {
   /**
    * Get request cookies
    *
-   * @return Cookies
+   * @return {Cookies} Request Cookies
    *
    */
   get cookies(): Cookies {
@@ -256,7 +266,7 @@ export class Request {
   /**
    * Get request body
    *
-   * @return ArrayBuffer | ArrayBufferView | undefined Request body
+   * @return {ArrayBuffer | ArrayBufferView | undefined} Request body
    *
    */
   get body(): ArrayBuffer | ArrayBufferView | undefined {

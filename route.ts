@@ -9,9 +9,9 @@ export interface Routes {
 /**
  * Route handler function
  *
- * @param  request   Request
- * @param  response  Response
- * @return void
+ * @param  {Request}  request   - Request
+ * @param  {Respone}  response  - Response
+ * @return {void}     void
  *
  */
 export type RouteHandler = (request: Request, response: Response) => void;
@@ -28,9 +28,9 @@ export class Route extends MiddlewareContainer {
   /**
    * Create an instance of Route
    *
-   * @param   path     string        Route path
-   * @param   method   string        HTTP Method
-   * @param   hander   RouteHandler
+   * @param   {string}        path     - Route path
+   * @param   {string}        method   - HTTP Method
+   * @param   {RouteHandler}  hander   - RouteHandler
    *
    */
   constructor(path: string, method: string, handler: RouteHandler) {
@@ -51,8 +51,8 @@ export class Route extends MiddlewareContainer {
    *    //...todo
    *  });
    *
-   * @param   fn   Middleware   Middleware
-   * @return  void
+   * @param   {Middleware}  fn  - Middleware
+   * @return  {void}  void
    *
    */
   use(fn: Middleware) {
@@ -62,7 +62,7 @@ export class Route extends MiddlewareContainer {
   /**
    * Get route path
    *
-   * @return   string
+   * @return   {string} Route Path
    *
    */
   get path(): string {
@@ -72,7 +72,7 @@ export class Route extends MiddlewareContainer {
   /**
    * Get route HTTP method
    *
-   * @return   string
+   * @return   {string}   Route method
    *
    */
   get method(): string {
@@ -82,9 +82,9 @@ export class Route extends MiddlewareContainer {
   /**
    * Execute route
    *
-   * @param   httpRequest   Request
-   * @param   httpResponse  Reponse
-   * @return  void
+   * @param   {Request}   httpRequest   - Request
+   * @param   {Response}  httpResponse  - Reponse
+   * @return  {void}      void
    *
    */
   async execute(httpRequest: Request, httpResponse: Response) {

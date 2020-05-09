@@ -27,8 +27,8 @@ export class Response {
   /**
    * Set Status Code
    *
-   * @param   code   number  Status Code
-   * @return  Response
+   * @param   {number}    code  - Status Code
+   * @return  {Response}  Response instance
    *
    */
   status(code: number): Response {
@@ -39,7 +39,7 @@ export class Response {
   /**
    * Get current status code
    *
-   * @return number
+   * @return {number}   Status Code
    *
    */
   get code(): number {
@@ -49,9 +49,9 @@ export class Response {
   /**
    * Set Header
    *
-   * @param   name   string   header name
-   * @param   value  string   value
-   * @return  Response
+   * @param   {string}  name   - header name
+   * @param   {string}  value  - value
+   * @return  {Response}  Response instance
    *
    */
   header(name: string, value: string): Response {
@@ -60,9 +60,9 @@ export class Response {
   }
 
   /**
-   * Headers
+   * Get response headers
    *
-   * @return   Headers
+   * @return   {Headers}  Response Headers
    *
    */
   get headers(): Headers {
@@ -72,8 +72,8 @@ export class Response {
   /**
    * Set Cookie
    *
-   * @param   cookie   Cookie   Cookie object
-   * @return  Reponse
+   * @param   {Cookie}  cookie  - Cookie object
+   * @return  {Reponse} Response instance
    *
    */
   cookie(cookie: Cookie): Response {
@@ -85,7 +85,7 @@ export class Response {
   /**
    * Get Cookies
    *
-   * @return Cookies
+   * @return {Cookies}  Response cookies
    *
    */
   get cookies(): Cookies {
@@ -99,15 +99,15 @@ export class Response {
   /**
    * Set response body
    *
-   * @param   body   Uint8Array | object | string   Response Body
-   * @return  Response
+   * @param   {Uint8Array | object | string}  body  - Response Body
+   * @return  {Response}  Response instance
    *
    */
   set(body: Uint8Array | object | string): Response {
     if (typeof body === "object" && !(body instanceof Uint8Array)) {
       this.header("content-type", "application/json");
       this._body = JSON.stringify(body);
-      
+
       return this;
     }
 
@@ -118,7 +118,7 @@ export class Response {
   /**
    * Get response body
    *
-   * @return    Uint8Array | string
+   * @return  {Uint8Array | string} Response body
    *
    */
   get body(): Uint8Array | string {
@@ -128,7 +128,7 @@ export class Response {
   /**
    * To Deno Response
    *
-   * @return HTTPResponse
+   * @return {HTTPResponse} HTTP Response
    *
    */
   get deno(): HTTPResponse {

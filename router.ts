@@ -42,7 +42,7 @@ export class Router extends MiddlewareContainer {
   /**
    * Rebase router
    *
-   * @param  path   string URL Path
+   * @param {string}  path  - URL Path
    *
    * @return Router
    *
@@ -53,6 +53,12 @@ export class Router extends MiddlewareContainer {
     return this;
   }
 
+  /**
+   * Get router path
+   *
+   * @return  {string}  Router Path
+   *
+   */
   get path() {
     return this._path;
   }
@@ -60,8 +66,8 @@ export class Router extends MiddlewareContainer {
   /**
    * Use middleware or application
    *
-   * @param  fn   Middleware|Server Middleware or sub-application
-   * @return void
+   * @param {Middleware|Server} fn  - Middleware or sub-application
+   * @return {void} void
    *
    */
   use(fn: Middleware | Router | Server): void {
@@ -82,9 +88,9 @@ export class Router extends MiddlewareContainer {
   }
 
   /**
-   * Static handler
+   * Default Route and Static handler
    *
-   * @type Route
+   * @type {Route}
    *
    */
   private _default: Route = new Route("default", HTTP.ALL,
@@ -99,7 +105,7 @@ export class Router extends MiddlewareContainer {
           .status(200)
           .header("content-type", MIME[filePathInfo.ext] || "application/octet-stream")
           .set(Deno.readFileSync(filePath))
-         return 
+         return
       }
 
       response
@@ -111,11 +117,11 @@ export class Router extends MiddlewareContainer {
   /**
    * Route path
    *
-   * @param   method       string Request method
-   * @param   path         string                 URL path
-   * @param   handler      RouteHandler           Callback for route
-   * @param   middlewares  Middleware[]           Route middlewares
-   * @return  void
+   * @param   {string}        method      - Request method
+   * @param   {string}        path        - URL path
+   * @param   {RounteHandler} handler     - Callback for route
+   * @param   {Middleware[]}  middlewares - Route middlewares
+   * @return  {void}          void
    *
    */
   route(method: string, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -138,10 +144,10 @@ export class Router extends MiddlewareContainer {
   /**
    * ALL Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   all(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -151,10 +157,10 @@ export class Router extends MiddlewareContainer {
   /**
    * GET Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   get(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -164,10 +170,10 @@ export class Router extends MiddlewareContainer {
   /**
    * HEAD Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   head(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -177,10 +183,10 @@ export class Router extends MiddlewareContainer {
   /**
    * POST Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   post(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -190,10 +196,10 @@ export class Router extends MiddlewareContainer {
   /**
    * PUT Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   put(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -203,10 +209,10 @@ export class Router extends MiddlewareContainer {
   /**
    * DELETE Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   delete(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -216,10 +222,10 @@ export class Router extends MiddlewareContainer {
   /**
    * CONNECT Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   connect(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -229,10 +235,10 @@ export class Router extends MiddlewareContainer {
   /**
    * OPTIONS Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   options(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -242,10 +248,10 @@ export class Router extends MiddlewareContainer {
   /**
    * TRACE Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   trace(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -255,10 +261,10 @@ export class Router extends MiddlewareContainer {
   /**
    * PATCH Route
    *
-   * @param   path         string         URL Path
-   * @param   handler      RouteHandler   Callback for route
-   * @param   middlewares  Middleware[]   Route middlewares
-   * @return  void
+   * @param   {string}        path         - URL Path
+   * @param   {RouteHandler}  handler      - Callback for route
+   * @param   {Middleware[]}  middlewares  - Route middlewares
+   * @return  {void}          void
    *
    */
   patch(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
@@ -273,8 +279,8 @@ export class Router extends MiddlewareContainer {
    *   const app = new Server();
    *   app.static("./static");
    *
-   * @param   path   string   Folder path
-   * @return  void
+   * @param   {string}  path  - Folder path
+   * @return  {void}    void
    *
    */
   static(path: string) {
@@ -284,9 +290,9 @@ export class Router extends MiddlewareContainer {
   /**
    * Get path route
    *
-   * @param   method  string   Request method
-   * @param   url     string   URL Path
-   * @return  Promise<RouteInfo>
+   * @param   {string}  method  - Request method
+   * @param   {string}  url     - URL Path
+   * @return  {Promise<RouteInfo>}  Promise<RouteInfo>
    *
    */
   async getRoute(method: string, url: string): Promise<RouteInfo> {
