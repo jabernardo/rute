@@ -2,12 +2,17 @@ name: Deno Test
 
 on:
   push:
-    tags: [ "0.8" ]
-    branches: [ "0.x" ]
+    tags: [ "0.9" ]
+    branches: [
+        "0.x",
+        "master"
+      ]
   pull_request:
-    tags: [ "0.8" ]
-    branches: [ "0.x" ]
-
+    tags: [ "0.9" ]
+    branches: [
+        "0.x",
+        "master"
+      ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +21,6 @@ jobs:
       - uses: actions/checkout@master
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 1.0.0-rc1
+          deno-version: 1.0.0-rc2
       - run: deno test
 

@@ -1,8 +1,8 @@
 <p align="center">
-<image src="https://raw.githubusercontent.com/jabernardo/rute/0.x/assets/rute.png" width="40%" height="40%" />
+<image src="https://raw.githubusercontent.com/jabernardo/rute/master/assets/rute.png" width="40%" height="40%" />
 </p>
 
-# Rute 
+# Rute
 A Simple Router for Deno
 
 ![Deno Test](https://github.com/jabernardo/rute/workflows/Deno%20Test/badge.svg)
@@ -15,9 +15,11 @@ A Simple Router for Deno
 ## Releases
 
 - `0.8` - Rute for Deno v0.41.0
+- `0.9` - Rute for Deno v1.0.0-rc2
 
 ## Branches
 
+- `master` - Recent Release
 - `0.x` - Development branch for version 0.x
 
 ## Installation
@@ -32,7 +34,7 @@ import { Server, Request, Response, Middleware, Next } from "https://raw.githubu
 
 ```sh
 
-deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/0.x/example/basic/app.ts
+deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/master/example/basic/app.ts
 
 ```
 
@@ -40,7 +42,7 @@ deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/r
 
 ```ts
 
-import { Server, Request, Response } from "https://raw.githubusercontent.com/jabernardo/rute/0.x/mod.ts";
+import { Server, Request, Response } from "https://raw.githubusercontent.com/jabernardo/rute/master/mod.ts";
 
 const app: Server = new Server();
 
