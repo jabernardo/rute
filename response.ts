@@ -1,5 +1,5 @@
-import { Response as HTTPResponse, ServerRequest } from "https://deno.land/std@v1.0.0-rc1/http/server.ts";
-import { Cookie, Cookies, setCookie, getCookies } from "https://deno.land/std@v1.0.0-rc1/http/cookie.ts";
+import { Response as HTTPResponse, ServerRequest } from "https://deno.land/std/http/server.ts";
+import { Cookie, Cookies, setCookie, getCookies } from "https://deno.land/std/http/cookie.ts";
 
 export { Cookie }
 

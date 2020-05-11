@@ -1,5 +1,5 @@
-import { serve, serveTLS, Server as HTTPServer, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v1.0.0-rc1/http/server.ts";
-import * as denoPath from "https://deno.land/std@v1.0.0-rc1/path/mod.ts";
+import { serve, serveTLS, Server as HTTPServer, ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std/http/server.ts";
+import * as denoPath from "https://deno.land/std/path/mod.ts";
 
 import { RouteInfo, Router } from "./router.ts";
 import { Route } from "./route.ts";

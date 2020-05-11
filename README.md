@@ -6,11 +6,11 @@
 A Simple Router for Deno
 
 ![Deno Test](https://github.com/jabernardo/rute/workflows/Deno%20Test/badge.svg)
-[![tag](https://img.shields.io/badge/deno-v1.0.0rc1-green.svg)](https://github.com/denoland/deno)
+[![tag](https://img.shields.io/badge/deno-v1.0.0rc2-green.svg)](https://github.com/denoland/deno)
 
 ## Prerequisites
 
-- deno 1.0.0-rc1
+- deno 1.0.0-rc2
 
 ## Releases
 

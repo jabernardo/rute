@@ -1,7 +1,7 @@
-import { ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std@v1.0.0-rc1/http/server.ts";
+import { ServerRequest, Response as HTTPResponse, HTTPOptions, HTTPSOptions } from "https://deno.land/std/http/server.ts";
 
-import * as denoPath from "https://deno.land/std@v1.0.0-rc1/path/mod.ts";
-import { existsSync } from "https://deno.land/std@v1.0.0-rc1/fs/exists.ts";
+import * as denoPath from "https://deno.land/std/path/mod.ts";
+import { existsSync } from "https://deno.land/std/fs/exists.ts";
 
 import { Request, HTTP } from "./request.ts";
 import { Response } from "./response.ts";
