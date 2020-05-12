@@ -91,6 +91,9 @@ const app: Server = new Server("multi_app");
 app.use(secondApp.rebase("second"));
 ```
 
+## Learn more!
+Our wiki is located [here](https://github.com/jabernardo/rute/wiki)
+
 ## Contibuting to Rute!
 To contribute to Rute! Make sure to give a star and forked this repository.
 
