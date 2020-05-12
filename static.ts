@@ -7,30 +7,10 @@ import { Request, HTTP } from "./request.ts";
 import { MIME } from "./mime_types.ts";
 
 import { defaultPage } from "./utils/page.ts";
-
- const { lstatSync } = Deno;
+import { isDirectory } from "./utils/fs.ts";
 
 export class Static {
   private _staticPaths: string[] = [];
-
-  /**
-   * Check if path is a directory
-   *
-   * @param   {string}  path System path
-   * @return  {boolean} is directory?
-   */
-  private _isDirectory(path: string): boolean {
-    try {
-      const fileInfo = lstatSync(path);
-      return fileInfo.isDirectory;
-    } catch (err) {
-      if (!(err instanceof Deno.errors.NotFound)) {
-        throw err;
-      }
-    }
-
-    return false;
-  }
 
   /**
    * Add static paths
@@ -56,7 +36,7 @@ export class Static {
       let filePath: string = denoPath.normalize(`.${urlWithoutParams}`);
       let filePathInfo = denoPath.parse(filePath);
 
-      if (this._isDirectory(filePath)) {
+      if (isDirectory(filePath)) {
         filePath = denoPath.join(filePath, "index.html");
         filePathInfo = denoPath.parse(filePath);
       }
@@ -80,4 +60,3 @@ export class Static {
     });
   }
 }
-
