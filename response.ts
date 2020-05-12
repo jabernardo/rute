@@ -1,8 +1,6 @@
 import { Response as HTTPResponse, ServerRequest } from "https://deno.land/std/http/server.ts";
 import { Cookie, Cookies, setCookie, getCookies } from "https://deno.land/std/http/cookie.ts";
 
-export { Cookie }
-
 /**
  * Response Object
  *

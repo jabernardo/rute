@@ -7,6 +7,7 @@ const app: Server = new Server();
  *   http://localhost:8000/public/style.css
  */
 app.static("./public");
+app.static("./public/test");
 
 /**
  * Middleware example
