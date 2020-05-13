@@ -2,13 +2,13 @@ name: Deno Test
 
 on:
   push:
-    tags: [ "0.9" ]
+    tags: [ "0.10" ]
     branches: [
         "0.x",
         "master"
       ]
   pull_request:
-    tags: [ "0.9" ]
+    tags: [ "0.10" ]
     branches: [
         "0.x",
         "master"
