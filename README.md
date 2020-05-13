@@ -4,6 +4,7 @@
 
 # Rute
 A Simple Router for Deno
+([https://deno.land/x/rute](https://deno.land/x/rute))
 
 ![Deno Test](https://github.com/jabernardo/rute/workflows/Deno%20Test/badge.svg)
 [![tag](https://img.shields.io/badge/deno-v1.0.0rc2-green.svg)](https://github.com/denoland/deno)
@@ -26,7 +27,7 @@ A Simple Router for Deno
 
 ```ts
 
-import { Server, Request, Response, Middleware, Next } from "https://raw.githubusercontent.com/jabernardo/rute/{release}/mod.ts";
+import { Server, Request, Response, Middleware, Next } from "https://deno.land/x/rute/mod.ts";
 
 ```
 
@@ -34,7 +35,7 @@ import { Server, Request, Response, Middleware, Next } from "https://raw.githubu
 
 ```sh
 
-deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/rute/master/example/basic/app.ts
+ deno run --allow-net --allow-read "https://deno.land/x/rute/example/basic/app.ts"
 
 ```
 
@@ -42,7 +43,7 @@ deno run --allow-net --allow-read https://raw.githubusercontent.com/jabernardo/r
 
 ```ts
 
-import { Server, Request, Response } from "https://raw.githubusercontent.com/jabernardo/rute/master/mod.ts";
+import { Server, Request, Response } from "https://deno.land/x/rute/mod.ts";
 
 const app: Server = new Server();
 
