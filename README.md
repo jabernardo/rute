@@ -17,6 +17,7 @@ A Simple Router for Deno
 
 - `0.8` - Rute for Deno v0.41.0
 - `0.9` - Rute for Deno v1.0.0-rc2
+- `0.10` - Rute for Deno v1.0.0-rc2 (use of registry https://deno.land/x/rute/)
 
 ## Branches
 
