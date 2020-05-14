@@ -67,7 +67,7 @@ export class Router extends MiddlewareContainer {
    */
   use(fn: Middleware | Router | Server): void {
     if (fn instanceof Server || fn instanceof Router) {
-      let appPath = getCleanPath(denoPath.join(this._path, fn.path).replace(denoPath.SEP, "/"));
+      let appPath = getCleanPath(denoPath.join(this._path, fn.path));
       let appKey = `|${appPath}`;
 
       if (typeof this._routes[appKey] !== "undefined") {
@@ -269,7 +269,7 @@ export class Router extends MiddlewareContainer {
 
     for (let route in this._routes) {
       const [ routeMethod, routePath ] = route.split("|");
-      const joinedPath = getCleanPath(denoPath.join(this._path, routePath).replace(denoPath.SEP, "/"));
+      const joinedPath = getCleanPath(denoPath.join(this._path, routePath));
 
       let tempRoute: Route | Router | Server = this._routes[route];
 

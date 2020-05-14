@@ -4,9 +4,10 @@ export interface RouteData {
 
 export function getCleanPath(uri: string): string {
   return "/" + uri
-    .replace(/([#?].*)$/, "")
-    .replace(/^([\/])/, "")
-    .replace(/([\/])$/, "");
+    .replace(/\\/ig, "/")
+    .replace(/([#?].*)$/ig, "")
+    .replace(/^([\/])/ig, "")
+    .replace(/([\/])$/ig, "");
 }
 
 export function getRouteTranslation(route: string): string {
