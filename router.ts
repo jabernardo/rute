@@ -67,8 +67,8 @@ export class Router extends MiddlewareContainer {
    */
   use(fn: Middleware | Router | Server): void {
     if (fn instanceof Server || fn instanceof Router) {
-      let appPath = getCleanPath(denoPath.join(this._path, fn.path));
-      let appKey = `\\${appPath}`;
+      let appPath = getCleanPath(denoPath.join(this._path, fn.path).replace(denoPath.SEP, "/"));
+      let appKey = `|${appPath}`;
 
       if (typeof this._routes[appKey] !== "undefined") {
         throw new Error(`Can't use on "${appPath}" because route already exists.`);
@@ -94,7 +94,7 @@ export class Router extends MiddlewareContainer {
    */
   route(method: string, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
     let routePath = getCleanPath(path);
-    let routeKey = `${method}\\${routePath}`;
+    let routeKey = `${method}|${routePath}`;
 
     let route = new Route(path, method, handler);
 
@@ -268,8 +268,8 @@ export class Router extends MiddlewareContainer {
     let data: RouteData | null = <RouteData>{};
 
     for (let route in this._routes) {
-      const [ routeMethod, routePath ] = route.split("\\");
-      const joinedPath = getCleanPath(denoPath.join(this._path, routePath));
+      const [ routeMethod, routePath ] = route.split("|");
+      const joinedPath = getCleanPath(denoPath.join(this._path, routePath).replace(denoPath.SEP, "/"));
 
       let tempRoute: Route | Router | Server = this._routes[route];
 
