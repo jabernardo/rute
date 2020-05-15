@@ -8,8 +8,6 @@ import { Request, createFromDenoRequest, HTTP } from "./request.ts";
 import { Response } from "./response.ts";
 import { getCleanPath } from "./route_parser.ts";
 
-import { Logger } from "./middlewares/logger.ts";
-
 import { log } from "./utils/console.ts";
 
 export { Router, Request, Response, Middleware, Next, HTTP }
@@ -25,8 +23,6 @@ export class Server extends Router {
     super(path);
 
     this._name = name;
-
-    this.use(Logger);
   }
 
   /**

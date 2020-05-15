@@ -1,6 +1,14 @@
 import { Server, Request, Response, Middleware, Next, HTTP } from "../../mod.ts";
 
+import { Logger } from "../../middlewares/logger/mod.ts";
+
 const app: Server = new Server();
+
+/**
+ * Use Logging Middleware
+ *
+ */
+app.use(Logger());
 
 /**
  * Static file server
@@ -12,11 +20,13 @@ app.static("./public/test");
 /**
  * Middleware example
  */
-app.use(async (req: Request, res: Response, n: Next) => {
+const exampleMiddleware: Middleware = async (req: Request, res: Response, n: Next) => {
   console.log("[begin] middleware");
   await n();
   console.log("[end] middleware");
-});
+};
+
+app.use(exampleMiddleware);
 
 /**
  * Index page

@@ -1,6 +1,14 @@
 import { Server, Request, Response, Middleware, Next, HTTP } from "../../mod.ts";
 
+import { Logger } from "../../middlewares/logger/mod.ts";
+
 const app: Server = new Server();
+
+/**
+ * Use Logging Middleware
+ *
+ */
+app.use(Logger());
 
 /**
  * Static file server
