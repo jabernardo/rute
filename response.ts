@@ -1,5 +1,14 @@
-import { Response as HTTPResponse, ServerRequest } from "https://deno.land/std/http/server.ts";
-import { Cookie, Cookies, setCookie, getCookies } from "https://deno.land/std/http/cookie.ts";
+import {
+  Response as HTTPResponse,
+  ServerRequest,
+} from "https://deno.land/std/http/server.ts";
+import {
+  Cookie,
+  Cookies,
+  setCookie,
+  getCookies,
+  delCookie,
+} from "https://deno.land/std/http/cookie.ts";
 
 /**
  * Response Object
@@ -95,6 +104,18 @@ export class Response {
   }
 
   /**
+   * Delete cookie
+   *
+   * @param    {string}   name Cookie name
+   * @return   {Response} Response instance
+   *
+   */
+  delCookie(name: string): Response {
+    delCookie(this._cookieHandler, name);
+    return this;
+  }
+
+  /**
    * Set response body
    *
    * @param   {Uint8Array | object | string}  body  - Response Body
@@ -131,13 +152,15 @@ export class Response {
    */
   get deno(): HTTPResponse {
     let headers: Headers = this._headers;
-    let cookieHeader: string = this._cookieHandler.headers ? this._cookieHandler.headers.get("set-cookie") || "" : "";
+    let cookieHeader: string = this._cookieHandler.headers
+      ? this._cookieHandler.headers.get("set-cookie") || ""
+      : "";
 
     headers.set("set-cookie", cookieHeader);
 
     let compiledResponse: HTTPResponse = {
       status: this._status,
-      headers
+      headers,
     };
 
     if (this._body) {
