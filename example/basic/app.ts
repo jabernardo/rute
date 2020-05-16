@@ -7,14 +7,16 @@ import {
   HTTP,
 } from "../../mod.ts";
 
+import { Catcher } from "../../middlewares/catcher/mod.ts";
 import { Logger } from "../../middlewares/logger/mod.ts";
 
 const app: Server = new Server();
 
 /**
- * Use Logging Middleware
+ * Use Available Middlewares
  *
  */
+app.use(Catcher());
 app.use(Logger());
 
 /**
@@ -71,6 +73,7 @@ const specificRouteMiddleware = async (
  */
 app.get("/hello-{name}", (req: Request, res: Response) => {
   res.set(`Hello, ${req.param("name")} !`);
+  throw new Error("Hello World!");
 }, specificRouteMiddleware);
 
 app.post("/hello-{name}", (req: Request, res: Response) => {
