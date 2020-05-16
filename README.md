@@ -7,7 +7,7 @@ A Simple Router for Deno
 ([https://deno.land/x/rute](https://deno.land/x/rute))
 
 ![Deno Test](https://github.com/jabernardo/rute/workflows/Deno%20Test/badge.svg)
-[![tag](https://img.shields.io/badge/deno-v1.0.0rc2-green.svg)](https://github.com/denoland/deno)
+[![tag](https://img.shields.io/badge/deno-v1.0.0-green.svg)](https://github.com/denoland/deno)
 
 ## Prerequisites
 
@@ -17,6 +17,7 @@ A Simple Router for Deno
 
 - `0.10` - Rute for Deno v1.0.0-rc2 (use of registry https://deno.land/x/rute/)
 - `0.11` - Rute for Deno v1.0.0
+- `0.12` - Optional middlewares
 
 ## Branches
 
@@ -27,7 +28,13 @@ A Simple Router for Deno
 
 ```ts
 
-import { Server, Request, Response, Middleware, Next } from "https://deno.land/x/rute/mod.ts";
+import {
+  Server,
+  Request,
+  Response,
+  Middleware,
+  Next
+} from "https://deno.land/x/rute/mod.ts";
 
 ```
 
@@ -43,7 +50,11 @@ import { Server, Request, Response, Middleware, Next } from "https://deno.land/x
 
 ```ts
 
-import { Server, Request, Response } from "https://deno.land/x/rute/mod.ts";
+import {
+  Server,
+  Request,
+  Response
+} from "https://deno.land/x/rute/mod.ts";
 
 const app: Server = new Server();
 
@@ -93,10 +104,18 @@ app.use(secondApp.rebase("second"));
 ```
 
 ## Learn more!
+
+### Examples
+
+We have few examples provided, that could be found [here](https://github.com/jabernardo/rute/tree/master/example).
+
+
+### Wiki
+
 Our wiki is located [here](https://github.com/jabernardo/rute/wiki)
 
 ## Contibuting to Rute!
-To contribute to Rute! Make sure to give a star and forked this repository.
+To contribute to Rute! Make sure to give a star and forked this repository. Current development branch is `0.x`, so make sure to checkout it.
 
 Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
