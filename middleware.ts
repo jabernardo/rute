@@ -12,7 +12,14 @@ export class MiddlewareContainer {
    * @return  {void}        void
    */
   use(fn: Middleware): void {
-    this.go = ((stack: Middleware) => async (request: Request, response: Response, next: Next) => await stack(request, response, fn.bind(this, request, response, next.bind(this))))(this.go);
+    this.go =
+      ((stack: Middleware) =>
+        async (request: Request, response: Response, next: Next) =>
+          await stack(
+            request,
+            response,
+            fn.bind(this, request, response, next.bind(this)),
+          ))(this.go);
   }
 
   /**

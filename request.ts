@@ -1,10 +1,14 @@
-import { ServerRequest, HTTPOptions, HTTPSOptions } from "https://deno.land/std/http/server.ts";
+import {
+  ServerRequest,
+  HTTPOptions,
+  HTTPSOptions,
+} from "https://deno.land/std/http/server.ts";
 import { Cookies, getCookies } from "https://deno.land/std/http/cookie.ts";
 
 import { RouteData } from "./route_parser.ts";
 import { RequestData, urlSearchQuery } from "./request_data.ts";
 
-import Conn = Deno.Conn
+import Conn = Deno.Conn;
 
 export interface HTTPMethods {
   [key: string]: string;
@@ -20,8 +24,8 @@ export const HTTP: HTTPMethods = {
   CONNECT: "CONNECT",
   OPTIONS: "OPTIONS",
   TRACE: "TRACE",
-  PATCH: "PATCH"
-}
+  PATCH: "PATCH",
+};
 
 export interface ServerInfo {
   protocol: string;
@@ -38,24 +42,30 @@ export interface ServerInfo {
  * @return  {ServerInfo}  Server Information
  *
  */
-export function parseServerInfo(addr: string | HTTPOptions | HTTPSOptions): ServerInfo {
-  let [ hostname, port ] = (typeof addr === "string")
+export function parseServerInfo(
+  addr: string | HTTPOptions | HTTPSOptions,
+): ServerInfo {
+  let [hostname, port] = (typeof addr === "string")
     ? addr.split(":")
-    : [ "hostname" in addr ? addr["hostname"] : "localhost", addr.port ];
+    : ["hostname" in addr ? addr["hostname"] : "localhost", addr.port];
 
   hostname = hostname || "localhost";
 
-  const certFile =  (typeof addr === "object" && "certFile" in addr) ? addr["certFile"] : undefined;
-  const keyFile =  (typeof addr === "object" && "keyFile" in addr) ? addr["keyFile"] : undefined;
+  const certFile = (typeof addr === "object" && "certFile" in addr)
+    ? addr["certFile"]
+    : undefined;
+  const keyFile = (typeof addr === "object" && "keyFile" in addr)
+    ? addr["keyFile"]
+    : undefined;
   const protocol = certFile ? "https://" : "http://";
 
-   return {
-     protocol: protocol,
-     hostname: hostname,
-     port: port,
-     certFile: certFile,
-     keyFile: keyFile
-   }
+  return {
+    protocol: protocol,
+    hostname: hostname,
+    port: port,
+    certFile: certFile,
+    keyFile: keyFile,
+  };
 }
 
 export interface RequestInfo {
@@ -77,15 +87,24 @@ export interface RequestInfo {
  * @return  {Promise<Request>} HTTP Request Object
  *
  */
-export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOptions, serverRequest: ServerRequest, params: RouteData =  <RouteData>{}): Promise<Request> {
+export async function createFromDenoRequest(
+  addr: string | HTTPOptions | HTTPSOptions,
+  serverRequest: ServerRequest,
+  params: RouteData = <RouteData> {},
+): Promise<Request> {
   const { protocol, hostname, port } = parseServerInfo(addr);
 
   // TODO: Currently deno doesn't support auth with ServerRequest
-  const hostUrlString = `${protocol}${hostname}${ port == "443" || port == "80" ? "" : ":" + port }${serverRequest.url}`;
+  const hostUrlString = `${protocol}${hostname}${
+    port == "443" || port == "80" ? "" : ":" + port
+  }${serverRequest.url}`;
   const hostUrl = new URL(hostUrlString);
 
   // TODO: Deno is checking for `cookie` instead of set-cookie
-  serverRequest.headers.set("cookie", serverRequest.headers.get("set-cookie") || "");
+  serverRequest.headers.set(
+    "cookie",
+    serverRequest.headers.get("set-cookie") || "",
+  );
 
   const httpRequestContent: RequestInfo = {
     conn: serverRequest.conn,
@@ -96,10 +115,10 @@ export async function createFromDenoRequest(addr: string | HTTPOptions | HTTPSOp
     cookies: getCookies(serverRequest),
     body: await Deno.readAll(serverRequest.body),
     params: params,
-    query: urlSearchQuery(hostUrl.search)
-  }
+    query: urlSearchQuery(hostUrl.search),
+  };
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     resolve(new Request(httpRequestContent));
   });
 }
@@ -213,7 +232,9 @@ export class Request {
    *
    */
   is(contentType: string): boolean {
-    let contentTypeTest: RegExp = new RegExp(`^.*/${ contentType.toLowerCase() }`);
+    let contentTypeTest: RegExp = new RegExp(
+      `^.*/${contentType.toLowerCase()}`,
+    );
     let header: string = this.header("content-type", "");
 
     return contentTypeTest.test(header);

@@ -6,20 +6,20 @@ import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { Route, Routes, RouteHandler } from "./route.ts";
 import { Static } from "./static.ts";
 
-import { Server} from "./server.ts";
+import { Server } from "./server.ts";
 
 export interface Servers {
-  [path: string]: Server
+  [path: string]: Server;
 }
 
 export interface RouteInfo {
-  path: string,
-  data: RouteData,
-  route: Route | Router | Server
+  path: string;
+  data: RouteData;
+  route: Route | Router | Server;
 }
 
 export interface Routers {
-  [path: string]: Router
+  [path: string]: Router;
 }
 
 export class Router extends MiddlewareContainer {
@@ -71,7 +71,9 @@ export class Router extends MiddlewareContainer {
       let appKey = `|${appPath}`;
 
       if (typeof this._routes[appKey] !== "undefined") {
-        throw new Error(`Can't use on "${appPath}" because route already exists.`);
+        throw new Error(
+          `Can't use on "${appPath}" because route already exists.`,
+        );
       }
 
       this._routes[appKey] = fn;
@@ -92,7 +94,12 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  route(method: string, path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  route(
+    method: string,
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     let routePath = getCleanPath(path);
     let routeKey = `${method}|${routePath}`;
 
@@ -144,7 +151,11 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  head(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  head(
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     this.route(HTTP.HEAD, path, handler, ...middlewares);
   }
 
@@ -157,7 +168,11 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  post(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  post(
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     this.route(HTTP.POST, path, handler, ...middlewares);
   }
 
@@ -183,7 +198,11 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  delete(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  delete(
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     this.route(HTTP.DELETE, path, handler, ...middlewares);
   }
 
@@ -196,7 +215,11 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  connect(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  connect(
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     this.route(HTTP.CONNECT, path, handler, ...middlewares);
   }
 
@@ -209,7 +232,11 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  options(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  options(
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     this.route(HTTP.OPTIONS, path, handler, ...middlewares);
   }
 
@@ -222,7 +249,11 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  trace(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  trace(
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     this.route(HTTP.TRACE, path, handler, ...middlewares);
   }
 
@@ -235,7 +266,11 @@ export class Router extends MiddlewareContainer {
    * @return  {void}          void
    *
    */
-  patch(path: string, handler: RouteHandler, ...middlewares: Middleware[]): void {
+  patch(
+    path: string,
+    handler: RouteHandler,
+    ...middlewares: Middleware[]
+  ): void {
     this.route(HTTP.PATCH, path, handler, ...middlewares);
   }
 
@@ -264,26 +299,32 @@ export class Router extends MiddlewareContainer {
    *
    */
   async getRoute(method: string, url: string): Promise<RouteInfo> {
-    let routeObj: Route = <Route>(this._routes["404"] || this._static.handler);
-    let data: RouteData | null = <RouteData>{};
+    let routeObj: Route = <Route> (this._routes["404"] || this._static.handler);
+    let data: RouteData | null = <RouteData> {};
 
     for (let route in this._routes) {
-      const [ routeMethod, routePath ] = route.split("|");
+      const [routeMethod, routePath] = route.split("|");
       const joinedPath = getCleanPath(denoPath.join(this._path, routePath));
 
       let tempRoute: Route | Router | Server = this._routes[route];
 
-      if ((tempRoute instanceof Server || tempRoute instanceof Router)
-         && url.indexOf(joinedPath) === 0) {
-        let fromAnother: RouteInfo = await tempRoute.rebase(joinedPath).getRoute(method, url);
+      if (
+        (tempRoute instanceof Server || tempRoute instanceof Router) &&
+        url.indexOf(joinedPath) === 0
+      ) {
+        let fromAnother: RouteInfo = await tempRoute.rebase(joinedPath)
+          .getRoute(method, url);
 
         return fromAnother;
       }
 
       data = test(joinedPath, url);
 
-      if (tempRoute instanceof Route && data != null && (routeMethod.length === 0 || method == routeMethod)) {
-        routeObj = <Route>tempRoute;
+      if (
+        tempRoute instanceof Route && data != null &&
+        (routeMethod.length === 0 || method == routeMethod)
+      ) {
+        routeObj = <Route> tempRoute;
         break;
       }
     }
@@ -291,8 +332,8 @@ export class Router extends MiddlewareContainer {
     return new Promise((resolve, reject) => {
       resolve({
         path: url,
-        data: data == null ? <RouteData>{} : data,
-        route: routeObj
+        data: data == null ? <RouteData> {} : data,
+        route: routeObj,
       });
     });
   }

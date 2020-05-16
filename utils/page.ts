@@ -1,5 +1,6 @@
 export function defaultPage(title: string, message: string) {
-  const favicon = "https://raw.githubusercontent.com/jabernardo/rute/master/assets/favicon.ico";
+  const favicon =
+    "https://raw.githubusercontent.com/jabernardo/rute/master/assets/favicon.ico";
 
   return `
 <!doctype html>

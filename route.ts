@@ -3,7 +3,7 @@ import { Response } from "./response.ts";
 import { MiddlewareContainer, Middleware, Next } from "./middleware.ts";
 
 export interface Routes {
-  [path: string]: Route
+  [path: string]: Route;
 }
 
 /**

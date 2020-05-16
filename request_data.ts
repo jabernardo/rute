@@ -1,5 +1,5 @@
 export interface RequestData {
-  [key: string]: string
+  [key: string]: string;
 }
 
 /**
@@ -13,8 +13,8 @@ export function urlSearchQuery(data: string): RequestData {
   let params: RequestData = {};
   data = data[0] == "?" ? data.substr(1, data.length) : data;
 
-  data.split("&").forEach(param => {
-    let [ key, val ] = param.split("=");
+  data.split("&").forEach((param) => {
+    let [key, val] = param.split("=");
 
     params[key] = val;
   });
@@ -32,8 +32,8 @@ export function urlSearchQuery(data: string): RequestData {
 export function formDataUrlEncoded(data: string): RequestData {
   let params: RequestData = {};
 
-  data.split("&").forEach(param => {
-    let [ key, val ] = param.split("=");
+  data.split("&").forEach((param) => {
+    let [key, val] = param.split("=");
 
     params[key] = val;
   });

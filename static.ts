@@ -29,34 +29,43 @@ export class Static {
    *
    */
   get handler(): Route {
-    return new Route("default", HTTP.ALL,
-    (request: Request, response: Response) => {
-      let i: number = 0;
-      let urlWithoutParams = request.url.pathname.replace(/([#?].*)$/, "");
-      let filePath: string = denoPath.normalize(`.${urlWithoutParams}`);
-      let filePathInfo = denoPath.parse(filePath);
+    return new Route(
+      "default",
+      HTTP.ALL,
+      (request: Request, response: Response) => {
+        let i: number = 0;
+        let urlWithoutParams = request.url.pathname.replace(/([#?].*)$/, "");
+        let filePath: string = denoPath.normalize(`.${urlWithoutParams}`);
+        let filePathInfo = denoPath.parse(filePath);
 
-      if (isDirectory(filePath)) {
-        filePath = denoPath.join(filePath, "index.html");
-        filePathInfo = denoPath.parse(filePath);
-      }
+        if (isDirectory(filePath)) {
+          filePath = denoPath.join(filePath, "index.html");
+          filePathInfo = denoPath.parse(filePath);
+        }
 
-      if (this._staticPaths.indexOf(filePathInfo.dir) > -1 && existsSync(filePath)) {
+        if (
+          this._staticPaths.indexOf(filePathInfo.dir) > -1 &&
+          existsSync(filePath)
+        ) {
+          response
+            .status(200)
+            .header(
+              "content-type",
+              MIME[filePathInfo.ext] || "application/octet-stream",
+            )
+            .set(Deno.readFileSync(filePath));
+          return;
+        }
+
         response
-          .status(200)
-          .header("content-type", MIME[filePathInfo.ext] || "application/octet-stream")
-          .set(Deno.readFileSync(filePath))
-         return
-      }
-
-      response
-        .status(404)
-        .set(
-          defaultPage(
-            "404 Page not Found",
-            "You're lost! The page you are looking for is not available."
-          )
-        );
-    });
+          .status(404)
+          .set(
+            defaultPage(
+              "404 Page not Found",
+              "You're lost! The page you are looking for is not available.",
+            ),
+          );
+      },
+    );
   }
 }

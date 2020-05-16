@@ -12,7 +12,8 @@ import { log } from "../../utils/console.ts";
  * @type {string}
  *
  */
-export const DEFAULT_LOG_FORMAT: string = "@ :host::host_port/:host_transport ( from :remote_host::remote_port/:remote_transport - :request_method - :response_code - :request_url )";
+export const DEFAULT_LOG_FORMAT: string =
+  "@ :host::host_port/:host_transport ( from :remote_host::remote_port/:remote_transport - :request_method - :response_code - :request_url )";
 
 /**
  * Formatted Connection String
@@ -34,18 +35,30 @@ export const DEFAULT_LOG_FORMAT: string = "@ :host::host_port/:host_transport ( 
  * @return  {string}
  *
  */
-export function fmtConnection(format: string, req: Request, res: Response): string {
-  const { remoteAddr, localAddr} = req.connection;
+export function fmtConnection(
+  format: string,
+  req: Request,
+  res: Response,
+): string {
+  const { remoteAddr, localAddr } = req.connection;
 
-  const localPort = "port"  in localAddr ? localAddr.port.toString() : "";
-  const localTransport = "transport" in localAddr ? localAddr.transport.toString() : "";
+  const localPort = "port" in localAddr ? localAddr.port.toString() : "";
+  const localTransport = "transport" in localAddr
+    ? localAddr.transport.toString()
+    : "";
   const localHostName = "hostname" in localAddr ? localAddr.hostname : "";
 
-  const remoteHostName = "hostname" in remoteAddr ? remoteAddr.hostname.toString() : "";
-  const remotePort = "port"  in remoteAddr ? remoteAddr.port.toString() : "";
-  const remoteTransport = "transport" in remoteAddr ? remoteAddr.transport.toString() : "";
+  const remoteHostName = "hostname" in remoteAddr
+    ? remoteAddr.hostname.toString()
+    : "";
+  const remotePort = "port" in remoteAddr ? remoteAddr.port.toString() : "";
+  const remoteTransport = "transport" in remoteAddr
+    ? remoteAddr.transport.toString()
+    : "";
 
-  const responseCode = res.code < 500 ? res.code.toString().green() : res.code.toString().red();
+  const responseCode = res.code < 500
+    ? res.code.toString().green()
+    : res.code.toString().red();
 
   const requestMethod = req.method;
   const requestUrl = req.url.href;

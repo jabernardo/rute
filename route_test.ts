@@ -7,7 +7,7 @@ Deno.test("[router: normal mode]", async function parseTest(): Promise<void> {
 
   responseTest
     .status(200)
-    .cookie({name: "auth", value: "1234"})
+    .cookie({ name: "auth", value: "1234" })
     .set("Hello World!");
 
   assertEquals(responseTest.body, "Hello World!");

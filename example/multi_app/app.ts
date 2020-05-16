@@ -1,4 +1,11 @@
-import { Server, Request, Response, Middleware, Next, HTTP } from "../../mod.ts";
+import {
+  Server,
+  Request,
+  Response,
+  Middleware,
+  Next,
+  HTTP,
+} from "../../mod.ts";
 
 import { Logger } from "../../middlewares/logger/mod.ts";
 
@@ -42,7 +49,9 @@ app.use(async (req: Request, res: Response, n: Next) => {
  * Index page
  */
 app.all("/", async (req: Request, res: Response) => {
-  let data = await fetch("https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty");
+  let data = await fetch(
+    "https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty",
+  );
   let json = await data.json();
   res.cookie({ name: "test", value: "hello world!!!!" });
   res.set(json);
@@ -52,7 +61,11 @@ app.all("/", async (req: Request, res: Response) => {
  * A certain specific route middleware
  *
  */
-const specificRouteMiddleware = async (req: Request, res: Response, n: Next) => {
+const specificRouteMiddleware = async (
+  req: Request,
+  res: Response,
+  n: Next,
+) => {
   console.log("[begin] route middleware");
   await n();
   console.log("[end] route middleware");
@@ -63,11 +76,11 @@ const specificRouteMiddleware = async (req: Request, res: Response, n: Next) => 
  *   http://localhost:8000/hello-yourname
  */
 app.get("/hello-{name}", (req: Request, res: Response) => {
-  res.set(`Hello, ${ req.param("name") } !`);
+  res.set(`Hello, ${req.param("name")} !`);
 }, specificRouteMiddleware);
 
 app.post("/hello-{name}", (req: Request, res: Response) => {
-  res.set(`Are you sure?, ${ req.param("name") } !`);
+  res.set(`Are you sure?, ${req.param("name")} !`);
 }, specificRouteMiddleware);
 
 /**
