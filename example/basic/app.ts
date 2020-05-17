@@ -7,8 +7,8 @@ import {
   HTTP,
 } from "../../mod.ts";
 
-import { Catcher } from "../../middlewares/catcher/mod.ts";
-import { Logger } from "../../middlewares/logger/mod.ts";
+import { catcher } from "../../middlewares/catcher/mod.ts";
+import { logger } from "../../middlewares/logger/mod.ts";
 
 const app: Server = new Server();
 
@@ -16,8 +16,8 @@ const app: Server = new Server();
  * Use Available Middlewares
  *
  */
-app.use(Catcher());
-app.use(Logger());
+app.use(catcher());
+app.use(logger());
 
 /**
  * Static file server

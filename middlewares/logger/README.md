@@ -14,11 +14,11 @@ import {
   HTTP,
 } from "../../mod.ts";
 
-import { Logger } from "../../middlewares/logger/mod.ts";
+import { logger } from "../../middlewares/logger/mod.ts";
 
 const app: Server = new Server();
 
-app.use(Logger());
+app.use(logger());
 
 ```
 
@@ -49,10 +49,10 @@ import {
   HTTP,
 } from "../../mod.ts";
 
-import { Logger } from "../../middlewares/logger/mod.ts";
+import { logger } from "../../middlewares/logger/mod.ts";
 
 const app: Server = new Server();
 
-app.use(Logger("@ :host::host_port/:host_transport ( from :remote_host::remote_port/:remote_transport - :request_method - :response_code - :request_url )"));
+app.use(logger("@ :host::host_port/:host_transport ( from :remote_host::remote_port/:remote_transport - :request_method - :response_code - :request_url )"));
 
 ```

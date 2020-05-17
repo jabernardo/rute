@@ -7,7 +7,7 @@ import {
   HTTP,
 } from "../../mod.ts";
 
-import { Logger } from "../../middlewares/logger/mod.ts";
+import { logger } from "../../middlewares/logger/mod.ts";
 
 import { app as secondApp } from "../main_app/app.ts";
 
@@ -17,7 +17,7 @@ const app: Server = new Server("multi_app");
  * Use Logging Middleware
  *
  */
-app.use(Logger());
+app.use(logger());
 
 /**
  * Importing another application?

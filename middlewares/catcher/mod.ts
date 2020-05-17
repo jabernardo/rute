@@ -42,7 +42,7 @@ export const defaultCatcher = (
  * @param   {CatcherCallback} action Custom Callback for Errors
  * @return  {Middleware}
  */
-export function Catcher(action?: CatcherCallback): Middleware {
+export function catcher(action?: CatcherCallback): Middleware {
   return async (req: Request, res: Response, n: Next) => {
     try {
       await n();

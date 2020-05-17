@@ -83,7 +83,7 @@ export function fmtConnection(
  * @return  {Middleware}
  *
  */
-export function Logger(format?: string): Middleware {
+export function logger(format?: string): Middleware {
   return async (req: Request, res: Response, n: Next) => {
     await n();
     log(fmtConnection(format || DEFAULT_LOG_FORMAT, req, res));
