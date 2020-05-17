@@ -1,14 +1,15 @@
 import {
+  // HTTP Modules
   Response as HTTPResponse,
-  ServerRequest,
-} from "https://deno.land/std/http/server.ts";
-import {
+  ServerRequest as HTTPRequest,
+
+  // HTTP Cookies
   Cookie,
   Cookies,
   setCookie,
   getCookies,
-  delCookie,
-} from "https://deno.land/std/http/cookie.ts";
+  delCookie
+} from "./deps.ts";
 
 /**
  * Response Object
@@ -96,7 +97,7 @@ export class Response {
    *
    */
   get cookies(): Cookies {
-    let request = new ServerRequest();
+    let request = new HTTPRequest();
     request.headers = this._cookieHandler.headers || new Headers();
     request.headers.set("cookie", request.headers.get("set-cookie") || "");
 

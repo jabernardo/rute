@@ -1,4 +1,5 @@
-import "https://raw.githubusercontent.com/jabernardo/strcolors.ts/0.1/mod.ts";
+// Import: Global from strcolors.ts (github.com/jabernardo/strcolors.ts)
+import "../../deps.ts";
 
 import { Middleware, Next } from "../../middleware.ts";
 import { Request } from "../../request.ts";

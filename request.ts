@@ -1,9 +1,13 @@
 import {
+  // HTTP Modules
   ServerRequest,
   HTTPOptions,
   HTTPSOptions,
-} from "https://deno.land/std/http/server.ts";
-import { Cookies, getCookies } from "https://deno.land/std/http/cookie.ts";
+
+  // HTTP Cookies
+  Cookies,
+  getCookies
+} from "./deps.ts";
 
 import { RouteData } from "./route_parser.ts";
 import { RequestData, urlSearchQuery } from "./request_data.ts";

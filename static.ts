@@ -1,5 +1,7 @@
-import { existsSync } from "https://deno.land/std/fs/exists.ts";
-import * as denoPath from "https://deno.land/std/path/mod.ts";
+import {
+  existsSync,
+  denoPath
+} from "./deps.ts";
 
 import { Route } from "./route.ts";
 import { Response } from "./response.ts";

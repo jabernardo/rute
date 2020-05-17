@@ -9,6 +9,7 @@ import {
 
 import { catcher } from "../../middlewares/catcher/mod.ts";
 import { logger } from "../../middlewares/logger/mod.ts";
+import { cors, corsRoute, CorsCallback } from "../../middlewares/cors/mod.ts";
 
 const app: Server = new Server();
 
@@ -76,9 +77,20 @@ app.get("/hello-{name}", (req: Request, res: Response) => {
   throw new Error("Hello World!");
 }, specificRouteMiddleware);
 
-app.post("/hello-{name}", (req: Request, res: Response) => {
-  res.set(`Are you sure?, ${req.param("name")} !`);
-}, specificRouteMiddleware);
+const corsOptions = {
+  origin: "http://www.google.com",
+  methods: "POST"
+};
+
+const testCorseCheck: CorsCallback = (req: Request, res: Response) => {
+  console.log("test");
+}
+
+app.options("/cors", corsRoute(corsOptions, testCorseCheck));
+
+app.post("/cors", (req: Request, res: Response) => {
+  res.set("CORS allowed page");
+}, cors(corsOptions));
 
 /**
  * LET'S GO!!!

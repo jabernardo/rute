@@ -1,4 +1,4 @@
-import * as denoPath from "https://deno.land/std/path/mod.ts";
+import { denoPath } from "./deps.ts";
 
 import { HTTP } from "./request.ts";
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
