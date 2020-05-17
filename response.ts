@@ -18,6 +18,7 @@ import {
 export class Response {
   private _status: number;
   private _body: Uint8Array | string;
+  private _body_locked: boolean;
   private _headers: Headers;
   private _cookieHandler: HTTPResponse;
 
@@ -28,6 +29,7 @@ export class Response {
   constructor() {
     this._status = 200;
     this._body = "";
+    this._body_locked = false;
     this._headers = new Headers();
     this._cookieHandler = {};
   }
@@ -124,6 +126,10 @@ export class Response {
    *
    */
   set(body: Uint8Array | object | string): Response {
+    if (this._body_locked) {
+      return this;
+    }
+
     if (typeof body === "object" && !(body instanceof Uint8Array)) {
       this.header("content-type", "application/json");
       this._body = JSON.stringify(body);
@@ -132,6 +138,17 @@ export class Response {
     }
 
     this._body = body;
+    return this;
+  }
+
+  /**
+   * Lock response body from being changed
+   *
+   * @return  {void}  void
+   */
+  finalize(): Response {
+    this._body_locked = true;
+
     return this;
   }
 
