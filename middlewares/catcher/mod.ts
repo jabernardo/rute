@@ -1,5 +1,3 @@
-import "https://raw.githubusercontent.com/jabernardo/strcolors.ts/0.1/mod.ts";
-
 import { Middleware, Next } from "../../middleware.ts";
 import { Request } from "../../request.ts";
 import { Response } from "../../response.ts";
