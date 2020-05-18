@@ -1,8 +1,8 @@
 /**
  * TODO:
  *
- * - whitelisting
- * - multiple origin
+ * - Code Cleanup
+ * - Example
  *
  */
 
@@ -11,25 +11,27 @@ import { Request } from "../../request.ts";
 import { Response } from "../../response.ts";
 import { RouteHandler } from "../../route.ts";
 
+export type OriginList = string | string[] | RegExp | RegExp[];
+
 export interface CorsOptions {
-  origin: string | RegExp,
-  methods: string,
-  status?: number,
-  headers?: string[],
-  exposeHeaders?: string[],
-  credentials?: boolean,
-  maxAge?: number,
+  origin: string | RegExp | OriginList;
+  methods: string;
+  status?: number;
+  headers?: string[];
+  exposeHeaders?: string[];
+  credentials?: boolean;
+  maxAge?: number;
 }
 
 export const defaultOptions: CorsOptions = {
   origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   status: 200,
-}
+};
 
 export type CorsCallback = (req: Request, res: Response) => void;
 
-function isOriginAllowed(origin: string, allowedOrigin: string | RegExp): boolean {
+function assertOrigin(origin: string, allowedOrigin: string | RegExp) {
   if (allowedOrigin instanceof RegExp) {
     return allowedOrigin.test(origin);
   }
@@ -37,10 +39,30 @@ function isOriginAllowed(origin: string, allowedOrigin: string | RegExp): boolea
   return origin === allowedOrigin;
 }
 
-export function configureCors(req: Request, res: Response, options?: CorsOptions | undefined) {
+function isOriginAllowed(origin: string, allowedOrigin: OriginList): boolean {
+  if (!Array.isArray(allowedOrigin)) {
+    return assertOrigin(origin, allowedOrigin);
+  }
+
+  for (let ind: number = 0; ind < allowedOrigin.length; ind++) {
+    if (assertOrigin(origin, allowedOrigin[ind])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+export function configureCors(
+  req: Request,
+  res: Response,
+  options?: CorsOptions | undefined,
+) {
   const httpOptions: CorsOptions = options || defaultOptions;
   const origin: string = req.headers.get("Origin") || "";
-  const allowedOrigin: string = isOriginAllowed(origin, httpOptions.origin) ? origin : "false";
+  const allowedOrigin: string = isOriginAllowed(origin, httpOptions.origin)
+    ? origin
+    : "false";
 
   res.header("Access-Control-Allow-Origin", allowedOrigin);
   res.header("Vary", "Origin");
@@ -65,12 +87,15 @@ export function configureCors(req: Request, res: Response, options?: CorsOptions
   }
 }
 
-export function corsRoute(options?: CorsOptions | undefined, callback?: CorsCallback): RouteHandler {
+export function corsRoute(
+  options?: CorsOptions | undefined,
+  callback?: CorsCallback,
+): RouteHandler {
   return (req: Request, res: Response) => {
     configureCors(req, res, options);
 
     res.header("Content-Length", "0");
-    res.status(options?.status || 204 );
+    res.status(options?.status || 204);
 
     if (typeof callback !== "undefined") {
       callback(req, res);
@@ -85,13 +110,13 @@ export function cors(options?: CorsOptions | undefined): Middleware {
     console.log(res.headers.get("Access-Control-Allow-Origin"));
 
     if (res.headers.get("Access-Control-Allow-Origin") === "false") {
-        res.header("Content-Length", "0");
-        res.status(options?.status || 204)
-        return;
+      res.header("Content-Length", "0");
+      res.status(options?.status || 204);
+      return;
     }
 
     await n();
-  }
+  };
 }
 
 // const corsOptions = {
