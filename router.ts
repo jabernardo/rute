@@ -1,6 +1,7 @@
 import { denoPath } from "./deps.ts";
 
-import { HTTP } from "./request.ts";
+import { HTTP, Request } from "./request.ts";
+import { Response } from "./response.ts";
 import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
 import { test, getCleanPath, RouteData } from "./route_parser.ts";
 import { Route, Routes, RouteHandler } from "./route.ts";
@@ -227,17 +228,17 @@ export class Router extends MiddlewareContainer {
    * OPTIONS Route
    *
    * @param   {string}        path         - URL Path
-   * @param   {RouteHandler}  handler      - Callback for route
    * @param   {Middleware[]}  middlewares  - Route middlewares
    * @return  {void}          void
    *
    */
   options(
     path: string,
-    handler: RouteHandler,
     ...middlewares: Middleware[]
   ): void {
-    this.route(HTTP.OPTIONS, path, handler, ...middlewares);
+    const emptyRoute: RouteHandler = (req: Request, res: Response) => {};
+
+    this.route(HTTP.OPTIONS, path, emptyRoute, ...middlewares);
   }
 
   /**
