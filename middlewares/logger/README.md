@@ -49,7 +49,7 @@ import {
   HTTP,
 } from "../../mod.ts";
 
-import { logger } from "../../middlewares/logger/mod.ts";
+import { logger } from "https://deno.land/x/rute/middlewares/logger/mod.ts";
 
 const app: Server = new Server();
 
