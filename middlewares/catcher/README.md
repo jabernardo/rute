@@ -18,8 +18,7 @@ import {
   HTTP,
 } from "../../mod.ts";
 
-// import { catcher } from "https://deno.land/x/rute/middlewares/catcher/mod.ts"
-import { catcher } from "./mod.ts";
+import { catcher } from "https://deno.land/x/rute/middlewares/catcher/mod.ts"
 
 const app: Server = new Server();
 
@@ -40,8 +39,7 @@ import {
   HTTP,
 } from "../../mod.ts";
 
-// import { catcher } from "https://deno.land/x/rute/middlewares/catcher/mod.ts"
-import { CatcherCallback, catcher } from "../../middlewares/catcher/mod.ts";
+import { CatcherCallback, catcher } from "https://deno.land/x/rute/middlewares/catcher/mod.ts"
 
 const sampleErrorHandler = (err: Error, req: Request, res: Response) => {
   // TODO: Your actions here...
