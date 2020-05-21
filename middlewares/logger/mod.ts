@@ -17,6 +17,12 @@ export const DEFAULT_LOG_FORMAT: string =
   "@ :host::host_port/:host_transport ( from :remote_host::remote_port/:remote_transport - :request_method - :response_code - :request_url )";
 
 /**
+ * Logger Callback
+ *
+ */
+export type LoggerCallback = (logMessage: string) => void;
+
+/**
  * Formatted Connection String
  *
  * @templates
@@ -84,9 +90,19 @@ export function fmtConnection(
  * @return  {Middleware}
  *
  */
-export function logger(format?: string): Middleware {
+export function logger(
+  format?: string,
+  action?: LoggerCallback | undefined,
+): Middleware {
   return async (req: Request, res: Response, n: Next) => {
     await n();
-    log(fmtConnection(format || DEFAULT_LOG_FORMAT, req, res));
+
+    const msg: string = fmtConnection(format || DEFAULT_LOG_FORMAT, req, res);
+
+    log(msg);
+
+    if (action) {
+      action(msg);
+    }
   };
 }

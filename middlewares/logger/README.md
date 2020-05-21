@@ -56,3 +56,27 @@ const app: Server = new Server();
 app.use(logger("@ :host::host_port/:host_transport ( from :remote_host::remote_port/:remote_transport - :request_method - :response_code - :request_url )"));
 
 ```
+
+### Using Hooks
+
+```ts
+import {
+  Server,
+  Request,
+  Response,
+  Middleware,
+  Next,
+  HTTP,
+} from "../../mod.ts";
+
+import { logger, DEFAULT_LOG_FORMAT } from "../../middlewares/logger/mod.ts";
+
+const app: Server = new Server();
+
+const loggerCatch = (msg: string) => {
+  console.log(`==> ${msg}`);
+}
+
+app.use(logger(DEFAULT_LOG_FORMAT, loggerCatch));
+
+```
