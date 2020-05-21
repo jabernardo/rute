@@ -1,17 +1,27 @@
-/**
- * TODO:
- *
- * - Code Cleanup
- * - Example
- *
- */
-
 import { Middleware, Next } from "../../middleware.ts";
 import { Request } from "../../request.ts";
 import { Response } from "../../response.ts";
 
+/**
+ * Aggregate type for list of origins
+ */
 export type OriginList = string | string[] | RegExp | RegExp[];
 
+/**
+ * CORS Options
+ *
+ * @example
+ *
+ *  const corsOptions = {
+ *    origin: [
+ *      /localhost/,
+ *      /*.mozilla.org/,
+ *    ],
+ *    methods: "DELETE,PUT",
+ *    status: 204
+ *  };
+ *
+ */
 export interface CorsOptions {
   origin: string | RegExp | OriginList;
   methods: string;
@@ -23,15 +33,31 @@ export interface CorsOptions {
   preflightContinue?: boolean;
 }
 
+/**
+ * Default Options for CORS
+ *
+ * - Origin: *
+ * - methods: GET,HEAD,PUT,PATCH,POST,DELETE
+ * - status: 204
+ *
+ * @type  {CorsOptions}
+ *
+ */
 export const defaultOptions: CorsOptions = {
   origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  status: 200,
+  status: 204,
   preflightContinue: false,
 };
 
-export type CorsCallback = (req: Request, res: Response) => void;
-
+/**
+ * Assert Origins
+ *
+ * @param   {string}        origin        Request Origin
+ * @param   {string|RegExp} allowedOrigin Allow origin
+ * @return  {boolean}
+ *
+ */
 function assertOrigin(origin: string, allowedOrigin: string | RegExp) {
   if (typeof allowedOrigin === "string" && allowedOrigin === "*") {
     allowedOrigin = new RegExp(".*");
@@ -44,6 +70,14 @@ function assertOrigin(origin: string, allowedOrigin: string | RegExp) {
   return origin === allowedOrigin;
 }
 
+/**
+ * Check if request origin is allowed on list
+ *
+ * @param   {string}      origin        Request Origin
+ * @param   {OriginList}  allowedOrigin Allowed origins
+ * @return  {boolean}
+ *
+ */
 function isOriginAllowed(origin: string, allowedOrigin: OriginList): boolean {
   if (!Array.isArray(allowedOrigin)) {
     return assertOrigin(origin, allowedOrigin);
@@ -58,11 +92,19 @@ function isOriginAllowed(origin: string, allowedOrigin: OriginList): boolean {
   return false;
 }
 
+/**
+ * Configure CORS headers
+ *
+ * @param   {Request}               req     Request object
+ * @param   {Response}              res     Response object
+ * @param   {CorsOptions|undefiend} options CORS Options
+ * @return  {void}
+ */
 export function configureCors(
   req: Request,
   res: Response,
   options?: CorsOptions | undefined,
-) {
+): void {
   const httpOptions: CorsOptions = options || defaultOptions;
 
   const origin: string = req.headers.get("Origin") || "";
@@ -95,6 +137,12 @@ export function configureCors(
   }
 }
 
+/**
+ * Get CORS Middleware
+ *
+ * @param   {CorsOptions|undefined}   options CORS Options
+ * @return  {Middleware}
+ */
 export function cors(options?: CorsOptions | undefined): Middleware {
   return async (req: Request, res: Response, n: Next) => {
     configureCors(req, res, options);
