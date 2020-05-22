@@ -2,13 +2,13 @@
 
 ## Catcher
 
-Error handling middleware. [Learn more](./middlewares/catcher)
+Error handling middleware. [Learn more](./catcher)
 
 ## CORS
 
-CORS middleware. [Learn more](./middlewares/cors)
+CORS middleware. [Learn more](./cors)
 
 ## Logger
 
-Logging middleware. [Learn more](./middlewares/logger)
+Logging middleware. [Learn more](./logger)
 
