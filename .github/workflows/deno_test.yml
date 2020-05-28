@@ -2,13 +2,13 @@ name: Deno Test
 
 on:
   push:
-    tags: [ "0.12" ]
+    tags: [ "0.13" ]
     branches: [
         "0.x",
         "master"
       ]
   pull_request:
-    tags: [ "0.12" ]
+    tags: [ "0.13" ]
     branches: [
         "0.x",
         "master"
@@ -21,5 +21,5 @@ jobs:
       - uses: actions/checkout@master
       - uses: denolib/setup-deno@master
         with:
-          deno-version: 1.0.0
+          deno-version: 1.0.2
       - run: deno test
