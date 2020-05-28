@@ -1,6 +1,6 @@
 import {
   existsSync,
-  denoPath
+  denoPath,
 } from "./deps.ts";
 
 import { Route } from "./route.ts";
@@ -25,6 +25,23 @@ export class Static {
   }
 
   /**
+   * Check if path is a static path
+   *
+   * @param   {string}  filePath  File
+   * @return  {boolean}
+   */
+  private _isStaticPath(filePath: string): boolean {
+    for (let ind = 0; ind < this._staticPaths.length; ind++) {
+      let pathTest: RegExp = new RegExp(`${this._staticPaths[ind]}(?:.*)`);
+      if (pathTest.test(filePath)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Get Handler Route
    *
    * @return  {Route} Static Route
@@ -46,7 +63,7 @@ export class Static {
         }
 
         if (
-          this._staticPaths.indexOf(filePathInfo.dir) > -1 &&
+          this._isStaticPath(filePathInfo.dir) &&
           existsSync(filePath)
         ) {
           response
