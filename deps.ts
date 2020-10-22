@@ -7,7 +7,7 @@ export {
   Response,
   HTTPOptions,
   HTTPSOptions,
-} from "https://deno.land/std@0.51.0/http/server.ts";
+} from "https://deno.land/std@0.74.0/http/server.ts";
 
 // Import: Deno HTTP Cookie Modules
 export {
@@ -15,17 +15,17 @@ export {
   Cookies,
   setCookie,
   getCookies,
-  delCookie,
-} from "https://deno.land/std@0.51.0/http/cookie.ts";
+  deleteCookie,
+} from "https://deno.land/std@0.74.0/http/cookie.ts";
 
 // Import: Deno Testing Modules
-export { assertEquals } from "https://deno.land/std@0.51.0/testing/asserts.ts";
+export { assertEquals } from "https://deno.land/std@0.74.0/testing/asserts.ts";
 
 // Import: Deno Path Modules
-export * as denoPath from "https://deno.land/std@0.51.0/path/mod.ts";
+export * as denoPath from "https://deno.land/std@0.74.0/path/mod.ts";
 
 // Import: Deno FS Modules
-export { existsSync } from "https://deno.land/std@0.51.0/fs/exists.ts";
+export { existsSync } from "https://deno.land/std@0.74.0/fs/exists.ts";
 
 // Import: Global from strcolors.ts
 export * from "https://deno.land/x/strcolors.ts@0.1/mod.ts";

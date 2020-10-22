@@ -8,7 +8,7 @@ import {
   Cookies,
   setCookie,
   getCookies,
-  delCookie
+  deleteCookie
 } from "./deps.ts";
 
 /**
@@ -113,8 +113,8 @@ export class Response {
    * @return   {Response} Response instance
    *
    */
-  delCookie(name: string): Response {
-    delCookie(this._cookieHandler, name);
+  deleteCookie(name: string): Response {
+    deleteCookie(this._cookieHandler, name);
     return this;
   }
 
