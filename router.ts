@@ -2,9 +2,9 @@ import { denoPath } from "./deps.ts";
 
 import { HTTP, Request } from "./request.ts";
 import { Response } from "./response.ts";
-import { MiddlewareContainer, Next, Middleware } from "./middleware.ts";
-import { test, getCleanPath, RouteData } from "./route_parser.ts";
-import { Route, Routes, RouteHandler } from "./route.ts";
+import { Middleware, MiddlewareContainer, Next } from "./middleware.ts";
+import { getCleanPath, RouteData, test } from "./route_parser.ts";
+import { Route, RouteHandler, Routes } from "./route.ts";
 import { Static } from "./static.ts";
 
 import { Server } from "./server.ts";
@@ -300,7 +300,11 @@ export class Router extends MiddlewareContainer {
    *
    */
   async getRoute(method: string, url: string): Promise<RouteInfo> {
-    let routeObj: Route = <Route> (this._routes["404"] || this._static.handler);
+    let routeObj: Route = <Route> (
+      this._routes[`${method}|/404`] ||
+      this._routes[`|/404`] ||
+      this._static.handler
+    );
     let data: RouteData | null = <RouteData> {};
 
     for (let route in this._routes) {
