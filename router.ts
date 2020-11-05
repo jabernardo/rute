@@ -2,10 +2,10 @@ import { denoPath } from "./deps.ts";
 
 import { HTTP, Request } from "./request.ts";
 import { Response } from "./response.ts";
-import { Middleware, MiddlewareContainer, Next } from "./middleware.ts";
+import { Middleware, MiddlewareContainer } from "./middleware.ts";
 import { getCleanPath, RouteData, test } from "./route_parser.ts";
 import { Route, RouteHandler, Routes } from "./route.ts";
-import { Static } from "./static.ts";
+import { defaultPage } from "./utils/page.ts";
 
 import { Server } from "./server.ts";
 
@@ -26,13 +26,11 @@ export interface Routers {
 export class Router extends MiddlewareContainer {
   private _path: string;
   private _routes: Routes | Routers | Servers = {};
-  private _static: Static;
 
   constructor(path: string = "/") {
     super();
 
     this._path = getCleanPath(path);
-    this._static = new Static();
   }
 
   /**
@@ -276,22 +274,6 @@ export class Router extends MiddlewareContainer {
   }
 
   /**
-   * Add static path
-   *
-   * @example
-   *
-   *   const app = new Server();
-   *   app.static("./static");
-   *
-   * @param   {string}  path  - Folder path
-   * @return  {void}    void
-   *
-   */
-  static(path: string) {
-    this._static.add(path);
-  }
-
-  /**
    * Get path route
    *
    * @param   {string}  method  - Request method
@@ -300,11 +282,7 @@ export class Router extends MiddlewareContainer {
    *
    */
   async getRoute(method: string, url: string): Promise<RouteInfo> {
-    let routeObj: Route = <Route> (
-      this._routes[`${method}|/404`] ||
-      this._routes[`|/404`] ||
-      this._static.handler
-    );
+    let routeObj: Route = defaultPage;
     let data: RouteData | null = <RouteData> {};
 
     for (let route in this._routes) {
