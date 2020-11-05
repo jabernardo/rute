@@ -1,4 +1,5 @@
 {
+    "deno.enable": true,
     "editor.tabSize": 2,
     "editor.renderWhitespace": "all",
     "files.trimTrailingWhitespace": true
