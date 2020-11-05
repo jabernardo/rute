@@ -32,6 +32,7 @@ export const defaultCatcher = (
   res: Response,
 ): void => {
   log(fmtConnection(DEFAULT_LOG_FORMAT, req, res), err);
+  res.status(500).set(err.toString());
 };
 
 /**
