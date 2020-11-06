@@ -1,29 +1,30 @@
 import {
-  Server,
-  Request,
-  Response,
+  HTTP,
   Middleware,
   Next,
-  HTTP,
+  Request,
+  Response,
+  Server,
 } from "../../mod.ts";
 
+import { files } from "../../middlewares/files/mod.ts";
 import { catcher } from "../../middlewares/catcher/mod.ts";
 import { logger } from "../../middlewares/logger/mod.ts";
 
 const app: Server = new Server();
 
-/**
+/************************************
  * Use Available Middlewares
  *
  */
-app.use(catcher());
-app.use(logger());
 
 /**
  * Static file server
- *   http://localhost:8000/public/style.css
+ *   http://localhost:8000/style.css
  */
-app.static("./public");
+app.use(files("./public"));
+app.use(catcher());
+app.use(logger());
 
 /**
  * Middleware example
