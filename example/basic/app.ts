@@ -49,7 +49,7 @@ app.all("/", async (req: Request, res: Response) => {
     "https://hacker-news.firebaseio.com/v0/item/2921983.json?print=pretty",
   );
   let json = await data.json();
-  res.cookie({ name: "test", value: "hello world!!!!" });
+  res.cookie({ name: "test", value: "asdasdasd" });
   res.set(json);
 });
 

@@ -19,7 +19,8 @@ import { getCleanPath } from "./route_parser.ts";
 
 import { log } from "./utils/console.ts";
 
-export { Router, Request, Response, Middleware, Next, HTTP };
+export { Router, Request, Response, HTTP };
+export type { Middleware, Next };
 
 /**
  * Server class application

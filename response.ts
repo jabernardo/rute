@@ -5,7 +5,6 @@ import {
 
   // HTTP Cookies
   Cookie,
-  Cookies,
   setCookie,
   getCookies,
   deleteCookie
@@ -98,7 +97,7 @@ export class Response {
    * @return {Cookies}  Response cookies
    *
    */
-  get cookies(): Cookies {
+  get cookies(): Record<string, string> {
     let request = new HTTPRequest();
     request.headers = this._cookieHandler.headers || new Headers();
     request.headers.set("cookie", request.headers.get("set-cookie") || "");

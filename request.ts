@@ -5,7 +5,6 @@ import {
   HTTPSOptions,
 
   // HTTP Cookies
-  Cookies,
   getCookies
 } from "./deps.ts";
 
@@ -78,7 +77,7 @@ export interface RequestInfo {
   method: string;
   protocol: string;
   headers: Headers;
-  cookies: Cookies;
+  cookies: Record<string, string>;
   params: RouteData;
   query: RequestData;
   body: ArrayBuffer | ArrayBufferView | undefined;
@@ -284,7 +283,7 @@ export class Request {
    * @return {Cookies} Request Cookies
    *
    */
-  get cookies(): Cookies {
+  get cookies(): Record<string, string> {
     return this._requestData.cookies;
   }
 
